@@ -1,0 +1,65 @@
+{
+  "name": "Elektro",
+  "version": "0.0.1",
+  "license": "MIT",
+  "browserslist": [
+    "> 1%"
+  ],
+  "scripts": {
+    "start": "yarn dev:wds",
+    "dev:wds": "webpack-dev-server --progress",
+    "prod:build": "rimraf lib && babel src -d lib --ignore .test.js",
+    "prod:start": "cross-env NODE_ENV=production pm2 start lib/server && pm2 logs",
+    "prod:stop": "pm2 delete server",
+    "start:documentation": "documentation serve --watch --shallow src/**",
+    "build:documentation": "documentation build src/** -f html -o docs --shallow",
+    "build:readme": "documentation readme src/** md --shallow --section=API",
+    "test": "eslint src && flow && jest --coverage",
+    "precommit": "yarn test",
+    "prepush": "yarn test",
+    "postpublish": "git push --all && git push origin --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/williammanco/Elektro.git"
+  },
+  "dependencies": {
+    "gsap": "^1.19.1",
+    "three": "^0.84.0",
+    "web-audio-analyser": "^2.0.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^7.1.1",
+    "babel-jest": "^19.0.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-env": "^1.2.1",
+    "babel-preset-flow": "^6.23.0",
+    "css-loader": "^0.28.0",
+    "documentation": "^4.0.0-beta.19",
+    "eslint": "^3.17.1",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-compat": "^1.0.2",
+    "eslint-plugin-flowtype": "^2.30.3",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^3.0.2 || ^4.0.0",
+    "eslint-plugin-react": "^6.9.0",
+    "exports-loader": "^0.6.4",
+    "file-loader": "^0.11.1",
+    "flow-bin": "^0.41.0",
+    "glslify": "^6.0.2",
+    "husky": "^0.13.2",
+    "imports-loader": "^0.7.1",
+    "jest": "^19.0.2",
+    "nodemon": "^1.11.0",
+    "pm2": "^2.4.5",
+    "raw-loader": "^0.5.1",
+    "rimraf": "^2.6.1",
+    "style-loader": "^0.16.1",
+    "three-orbitcontrols": "^1.1.2",
+    "url-loader": "^0.5.8",
+    "webpack": "^2.4.1",
+    "webpack-dev-server": "^2.4.2"
+  }
+}
