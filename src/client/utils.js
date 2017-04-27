@@ -4,8 +4,8 @@
 import 'babel-polyfill'
 
 /**
- * Utils
- * @type Class
+ * [multiply description]
+ * @type {[type]}
  */
 export default class Utils {
 
