@@ -1,9 +1,10 @@
 // @flow
 
 import path from 'path'
-
 import { WDS_PORT } from './src/shared/config'
 import { isProd } from './src/shared/util'
+import DashboardPlugin from 'webpack-dashboard/plugin'
+import UglifyJSPlugin from 'uglifyjs-webpack-plugin'
 
 export default {
   entry: [
@@ -14,6 +15,14 @@ export default {
     path: path.resolve(__dirname, 'dist'),
     publicPath: isProd ? '/static/' : `http://localhost:${WDS_PORT}/dist/`,
   },
+  plugins: [
+    new DashboardPlugin(),
+    new UglifyJSPlugin({
+      compress: {
+        warnings: false
+      }
+    })
+  ],
   module: {
     rules: [
       { test: /\.(js|jsx)$/, use: 'babel-loader', exclude: /node_modules/ },

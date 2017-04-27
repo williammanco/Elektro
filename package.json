@@ -7,16 +7,16 @@
   ],
   "scripts": {
     "start": "yarn dev:wds",
-    "dev:wds": "webpack-dev-server --progress",
-    "prod:build": "rimraf lib && babel src -d lib --ignore .test.js",
+    "dev:wds": "webpack-dashboard -- webpack-dev-server --progress",
+    "prod:build": "rimraf lib && babel src -d lib --ignore .test.js && BABEL_ENV=production webpack --progress",
     "prod:start": "cross-env NODE_ENV=production pm2 start lib/server && pm2 logs",
     "prod:stop": "pm2 delete server",
     "start:documentation": "documentation serve --watch --shallow src/**",
     "build:documentation": "documentation build src/** -f html -o docs --shallow",
     "build:readme": "documentation readme src/** md --shallow --section=API",
     "test": "eslint src && flow && jest --coverage",
-    "precommit": "yarn test",
-    "prepush": "yarn test"
+    "precommit-": "yarn test",
+    "prepush-": "yarn test"
   },
   "dependencies": {
     "gsap": "^1.19.1",
@@ -53,8 +53,11 @@
     "rimraf": "^2.6.1",
     "style-loader": "^0.16.1",
     "three-orbitcontrols": "^1.1.2",
+    "uglify-js": "^2.8.22",
+    "uglifyjs-webpack-plugin": "^0.4.3",
     "url-loader": "^0.5.8",
     "webpack": "^2.4.1",
+    "webpack-dashboard": "^0.3.0",
     "webpack-dev-server": "^2.4.2"
   }
 }
