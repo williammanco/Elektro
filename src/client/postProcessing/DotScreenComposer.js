@@ -37,6 +37,7 @@ export default class DotScreenComposer extends Composer {
 
   _setPass(){
     this.dotScreenPass = new THREE.DotScreenPass()
+    this.dotScreenPass.renderToScreen = true
   }
 
   _addPass(){

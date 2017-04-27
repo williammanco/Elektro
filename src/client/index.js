@@ -6,9 +6,11 @@ import { APP_CONTAINER_SELECTOR } from '../shared/config'
 import * as THREE from 'three/src/Three'
 import OrbitControls from 'three-orbitcontrols'
 import MeshTruffle from './mesh/MeshTruffle'
+// import MaterialGlow from './material/MaterialGlow'
 import CameraTrack from './Camera/CameraTrack'
 import DotScreenComposer from './postProcessing/DotScreenComposer'
-import BokehComposer from './postProcessing/BokehComposer'
+// import BokehComposer from './postProcessing/BokehComposer'
+import ParticleEmber from './particle/ParticleEmber'
 
 import Utils from './Utils'
 
@@ -181,7 +183,7 @@ export default class Elektro {
     let lookAt = this.meshDDD.position
     this.cameraTrack = new CameraTrack(this.state,{lookAt : [lookAt.x,lookAt.y,lookAt.z]}).init()
 
-
+    this.particle = new ParticleEmber(this.state).init()
 
 
 
@@ -196,36 +198,17 @@ export default class Elektro {
     document.body.appendChild( this.state.renderer.domElement )
 
   }
-  _initPostProcessing0(){
-    // this.postProcessingx = {}
-    // this.state.renderScenex = new THREE.RenderPass(this.state.scene, this.state.camera);
-    // this.copyShaderx = new THREE.ShaderPass(THREE.CopyShader);
-    // this.copyShaderx.renderToScreen = true;
-    // this.bloomPassx = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);//1.0, 9, 0.5, 512);
-    // this.filmPassx = new THREE.FilmPass( 0.35, 0.025, 648, false );
-    // this.dotScreenPassx = new THREE.DotScreenPass();
-    // this.postProcessingx.composer = new THREE.EffectComposer(this.state.renderer);
-    // this.postProcessingx.composer.setSize(window.innerWidth, window.innerHeight);
-    // this.postProcessingx.composer.addPass(this.state.renderScenex);
-    // //this.composer.addPass(this.bloomPass);
-    // //
-    // this.postProcessingx.composer.addPass(this.dotScreenPassx);
-    // this.postProcessingx.composer.addPass(this.copyShaderx);
-    // this.state.renderer.gammaInput = true;
-    // this.state.renderer.gammaOutput = true;
-    // console.log(this.postProcessingx.composer)
 
-  }
-  //
   _initPostProcessing(){
-    this.composer = new BokehComposer(this.state).init()
+    this.composer = new DotScreenComposer(this.state).init()
     // this.composer.addPass(new DotScreenComposer(this.state).getPass())
     // this.composer.closeComposer()
   }
 
   render() {
     let self = this
-    let timer = Date.now() * 0.0001;
+    let delta = Date.now();
+    let timer = delta * 0.0001;
 
     this.mesh.rotation.x += 0.01
     this.mesh.rotation.y += 0.02
@@ -241,6 +224,7 @@ export default class Elektro {
 
     this.cameraTrack.loop();
 
+// this.particle.render(delta)
     // this.postProcessing.composer.render(0.02)
 
     this.composer.render()

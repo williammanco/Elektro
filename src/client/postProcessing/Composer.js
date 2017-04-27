@@ -37,19 +37,15 @@ export default class Composer {
   */
 
   _initPostprocessing() {
-    this.copyShader = new THREE.ShaderPass(THREE.CopyShader)
+    this.state.postProcessing = {}
     this.state.renderPass == undefined ? this.state.renderPass = new THREE.RenderPass( this.state.scene, this.state.camera ) : null
     this.state.effectComposer == undefined ? this.state.effectComposer = new THREE.EffectComposer( this.state.renderer ) : null
-    this.copyShader.renderToScreen = true
+    this.copyShader = new THREE.ShaderPass(THREE.CopyShader)
     this.state.effectComposer.addPass( this.state.renderPass )
-    this.state.postProcessing = {}
     this.state.postProcessing.composer = this.state.effectComposer
-    this.state.renderer.gammaInput = true
-    this.state.renderer.gammaOutput = true
   }
 
   _closeComposer(){
-    this.state.postProcessing.composer.addPass(this.copyShader)
     this.state.renderer.gammaInput = true;
     this.state.renderer.gammaOutput = true;
   }

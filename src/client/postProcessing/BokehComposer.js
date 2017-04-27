@@ -42,8 +42,6 @@ export default class BokehComposer extends Composer {
   _setPass(){
     this.bokehPass = new THREE.BokehPass( this.state.scene, this.state.camera, this.settings)
     this.bokehPass.renderToScreen = true
-    this.copyShader.renderToScreen = false
-
   }
 
   _addPass(){

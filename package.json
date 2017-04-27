@@ -16,12 +16,7 @@
     "build:readme": "documentation readme src/** md --shallow --section=API",
     "test": "eslint src && flow && jest --coverage",
     "precommit": "yarn test",
-    "prepush": "yarn test",
-    "postpublish": "git push --all && git push origin --tags"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/williammanco/Elektro.git"
+    "prepush": "yarn test"
   },
   "dependencies": {
     "gsap": "^1.19.1",
