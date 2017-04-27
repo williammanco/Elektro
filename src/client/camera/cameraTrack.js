@@ -2,13 +2,14 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import {Vector3,CatmullRomCurve3}  from 'three/src/Three'
+import { Vector3, CatmullRomCurve3 }  from 'three/src/Three'
 
 /**
 * CameraTrack
 * @type Class
 */
 export default class CameraTrack {
+  
   /**
   * [constructor description]
   * @param  {[type]} state [description]

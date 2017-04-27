@@ -2,11 +2,10 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import { APP_CONTAINER_SELECTOR } from '../shared/config'
-import * as THREE from 'three/src/Three'
+import { CubeGeometry, CubeCamera, ShaderMaterial, Mesh } from 'three/src/Three'
 import ImprovedNoise from './assets/js/ImprovedNoise'
 
-THREE.FresnelShader = require('imports-loader?THREE=three!exports-loader?THREE.FresnelShader!three/examples/js/shaders/FresnelShader');
+const FresnelShader = require('imports-loader?THREE=three!exports-loader?THREE.FresnelShader!three/examples/js/shaders/FresnelShader');
 
 
 /**
@@ -31,6 +30,7 @@ export default class MeshBubble {
     this.state = {
       texture : { }
     }
+    state ? Object.assign(self.state, state) : null
 
     /**
      * [settings description]
@@ -40,11 +40,17 @@ export default class MeshBubble {
      * @type {Object}
      */
     this.settings = {
-      size : [40, 40, 40, 40, 40, 40]
+      size : [40, 40, 40, 40, 40, 40],
+      uniforms : {
+    		"mRefractionRatio": { type: "f", value: 1.02 },
+    		"mFresnelBias": 	{ type: "f", value: 0.1 },
+    		"mFresnelPower": 	{ type: "f", value: 2.0 },
+    		"mFresnelScale": 	{ type: "f", value: 1.0 },
+    		"tCube": 			{ type: "t", value: this.refractSphereCamera.renderTarget } //  textureCube }
+    	}
     }
 
     //Merging settings and state if is not empty
-    state ? Object.assign(self.state, state) : null
     settings ? Object.assign(self.settings, settings) : null
 
     this.improvedNoise = new ImprovedNoise()
@@ -59,7 +65,7 @@ export default class MeshBubble {
         return t
   }
   _geometry(){
-    this.geometry = new THREE.CubeGeometry(...this.settings.size)
+    this.geometry = new CubeGeometry(...this.settings.size)
     this.geometry.verticesNeedUpdate = true
     this.geometry.normalsNeedUpdate = true
     this.geometry.uvsNeedUpdate = true
@@ -80,32 +86,21 @@ export default class MeshBubble {
   }
   _material(){
     let self = this
-    this.refractSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
+    this.refractSphereCamera = new CubeCamera( 0.1, 5000, 512 );
 
-  	let fShader = THREE.FresnelShader;
-
-  	let fresnelUniforms =
-  	{
-  		"mRefractionRatio": { type: "f", value: 1.02 },
-  		"mFresnelBias": 	{ type: "f", value: 0.1 },
-  		"mFresnelPower": 	{ type: "f", value: 2.0 },
-  		"mFresnelScale": 	{ type: "f", value: 1.0 },
-  		// "tCube": 			{ type: "t", value: this.refractSphereCamera.renderTarget } //  textureCube }
-  	};
 
 	// create custom material for the shader
-	this.material = new THREE.ShaderMaterial(
-	{
-	    uniforms: 		fresnelUniforms,
-		vertexShader:   fShader.vertexShader,
-		fragmentShader: fShader.fragmentShader
-	}   );
+	this.material = new ShaderMaterial({
+	  uniforms: 		this.settings.uniforms,
+		vertexShader:   this.shader.vertexShader,
+		fragmentShader: this.shader.fragmentShader
+	});
 
 
 
   }
   _mesh(){
-    this.mesh = new THREE.Mesh( this.geometry, this.material )
+    this.mesh = new Mesh( this.geometry, this.material )
   }
 
   /**

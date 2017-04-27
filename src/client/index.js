@@ -4,7 +4,7 @@
 import 'babel-polyfill'
 
 import { APP_CONTAINER_SELECTOR } from '../shared/config'
-import {Scene,WebGLRenderer,PerspectiveCamera,AmbientLight,SpotLight,JSONLoader,TextureLoader,LoadingManager,BoxHelper,Mesh} from 'three/src/Three'
+import { Scene, WebGLRenderer, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh } from 'three/src/Three'
 import OrbitControls from 'three-orbitcontrols'
 import MeshTruffle from './mesh/MeshTruffle'
 // import MaterialGlow from './material/MaterialGlow'
@@ -224,7 +224,7 @@ export default class Elektro {
 
     this.cameraTrack.loop();
 
-// this.particle.render(delta)
+    //this.particle.render(delta)
     // this.postProcessing.composer.render(0.02)
 
     this.composer.render()

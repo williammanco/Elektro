@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import {Vector3} from 'three/src/Three'
+import { Vector3 } from 'three/src/Three'
 
 const GPUParticleSystem = require('imports-loader?THREE=three!exports-loader?THREE.GPUParticleSystem!three/examples/js/GPUParticleSystem')
 

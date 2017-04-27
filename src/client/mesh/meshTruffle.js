@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import {Vector2,CubeGeometry,ShaderMaterial,Mesh,RepeatWrapping} from 'three/src/Three'
+import { Vector2, CubeGeometry, ShaderMaterial, Mesh, RepeatWrapping } from 'three/src/Three'
 import ImprovedNoise from '../assets/js/ImprovedNoise'
 
 const shaderVert = require('../assets/shader/matcapSEM.vert')
