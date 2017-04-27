@@ -2,11 +2,10 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import * as THREE from 'three/src/Three'
 import Composer from './Composer'
 
-THREE.BokehShader = require('imports-loader?THREE=three!exports-loader?THREE.BokehShader!three/examples/js/shaders/BokehShader')
-THREE.BokehPass = require('imports-loader?THREE=three!exports-loader?THREE.BokehPass!three/examples/js/postprocessing/BokehPass')
+const BokehShader = require('imports-loader?THREE=three!exports-loader?THREE.BokehShader!three/examples/js/shaders/BokehShader')
+const BokehPass = require('imports-loader?THREE=three!exports-loader?THREE.BokehPass!three/examples/js/postprocessing/BokehPass')
 
 /**
 * BokehPass
@@ -40,7 +39,7 @@ export default class BokehComposer extends Composer {
   }
 
   _setPass(){
-    this.bokehPass = new THREE.BokehPass( this.state.scene, this.state.camera, this.settings)
+    this.bokehPass = new BokehPass( this.state.scene, this.state.camera, this.settings)
     this.bokehPass.renderToScreen = true
   }
 

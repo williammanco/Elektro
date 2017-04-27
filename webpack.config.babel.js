@@ -6,6 +6,17 @@ import { isProd } from './src/shared/util'
 import DashboardPlugin from 'webpack-dashboard/plugin'
 import UglifyJSPlugin from 'uglifyjs-webpack-plugin'
 
+const uglify = new UglifyJSPlugin({
+      compress: {
+        warnings: false
+      }
+    })
+
+
+
+console.log(uglify)
+
+
 export default {
   entry: [
     './src/client',
@@ -16,12 +27,7 @@ export default {
     publicPath: isProd ? '/static/' : `http://localhost:${WDS_PORT}/dist/`,
   },
   plugins: [
-    new DashboardPlugin(),
-    new UglifyJSPlugin({
-      compress: {
-        warnings: false
-      }
-    })
+    new DashboardPlugin()
   ],
   module: {
     rules: [

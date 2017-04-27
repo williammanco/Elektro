@@ -2,11 +2,9 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import * as THREE from 'three/src/Three'
 import Composer from './Composer'
-
-THREE.DotScreenShader = require('imports-loader?THREE=three!exports-loader?THREE.DotScreenShader!three/examples/js/shaders/DotScreenShader');
-THREE.DotScreenPass = require('imports-loader?THREE=three!exports-loader?THREE.DotScreenPass!three/examples/js/postprocessing/DotScreenPass');
+const DotScreenShader = require('imports-loader?THREE=three!exports-loader?THREE.DotScreenShader!three/examples/js/shaders/DotScreenShader');
+const DotScreenPass = require('imports-loader?THREE=three!exports-loader?THREE.DotScreenPass!three/examples/js/postprocessing/DotScreenPass');
 
 
 /**
@@ -36,7 +34,7 @@ export default class DotScreenComposer extends Composer {
 
 
   _setPass(){
-    this.dotScreenPass = new THREE.DotScreenPass()
+    this.dotScreenPass = new DotScreenPass()
     this.dotScreenPass.renderToScreen = true
   }
 

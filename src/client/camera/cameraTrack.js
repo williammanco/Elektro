@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import * as THREE from 'three/src/Three'
+import {Vector3,CatmullRomCurve3}  from 'three/src/Three'
 
 /**
 * CameraTrack
@@ -49,10 +49,10 @@ export default class CameraTrack {
     let camera = this.state.camera
     this.points = []
     for ( let i = 0; i < this.settings.spline.length; i ++ ) {
-      this.points.push(new THREE.Vector3(...self.settings.spline[i]))
+      this.points.push(new Vector3(...self.settings.spline[i]))
     }
     console.log(this.points)
-    this.spline = new  THREE.CatmullRomCurve3(this.points);
+    this.spline = new  CatmullRomCurve3(this.points);
     this.camPosIndex = 0;
     camera.position.z = 5;
     return this
@@ -77,7 +77,7 @@ export default class CameraTrack {
     camera.rotation.y = camRot.y;
     camera.rotation.z = camRot.z;
 
-    camera.lookAt(new THREE.Vector3(...self.settings.lookAt));
+    camera.lookAt(new Vector3(...self.settings.lookAt));
   }
 
 

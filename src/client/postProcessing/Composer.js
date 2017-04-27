@@ -2,13 +2,11 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import * as THREE from 'three/src/Three'
-
-THREE.CopyShader = require('imports-loader?THREE=three!exports-loader?THREE.CopyShader!three/examples/js/shaders/CopyShader')
-THREE.EffectComposer = require('imports-loader?THREE=three!exports-loader?THREE.EffectComposer!three/examples/js/postprocessing/EffectComposer')
-THREE.RenderPass = require('imports-loader?THREE=three!exports-loader?THREE.RenderPass!three/examples/js/postprocessing/RenderPass')
-THREE.ShaderPass = require('imports-loader?THREE=three!exports-loader?THREE.ShaderPass!three/examples/js/postprocessing/ShaderPass')
-THREE.MaskPass = require('imports-loader?THREE=three!exports-loader?THREE.MaskPass!three/examples/js/postprocessing/MaskPass')
+const CopyShader = require('imports-loader?THREE=three!exports-loader?THREE.CopyShader!three/examples/js/shaders/CopyShader')
+const EffectComposer = require('imports-loader?THREE=three!exports-loader?THREE.EffectComposer!three/examples/js/postprocessing/EffectComposer')
+const RenderPass = require('imports-loader?THREE=three!exports-loader?THREE.RenderPass!three/examples/js/postprocessing/RenderPass')
+const ShaderPass = require('imports-loader?THREE=three!exports-loader?THREE.ShaderPass!three/examples/js/postprocessing/ShaderPass')
+const MaskPass = require('imports-loader?THREE=three!exports-loader?THREE.MaskPass!three/examples/js/postprocessing/MaskPass')
 
 /**
 * DOF
@@ -38,9 +36,9 @@ export default class Composer {
 
   _initPostprocessing() {
     this.state.postProcessing = {}
-    this.state.renderPass == undefined ? this.state.renderPass = new THREE.RenderPass( this.state.scene, this.state.camera ) : null
-    this.state.effectComposer == undefined ? this.state.effectComposer = new THREE.EffectComposer( this.state.renderer ) : null
-    this.copyShader = new THREE.ShaderPass(THREE.CopyShader)
+    this.state.renderPass == undefined ? this.state.renderPass = new RenderPass( this.state.scene, this.state.camera ) : null
+    this.state.effectComposer == undefined ? this.state.effectComposer = new EffectComposer( this.state.renderer ) : null
+    this.copyShader = new ShaderPass(CopyShader)
     this.state.effectComposer.addPass( this.state.renderPass )
     this.state.postProcessing.composer = this.state.effectComposer
   }

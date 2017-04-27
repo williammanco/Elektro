@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import * as THREE from 'three/src/Three'
+import {Vector2,CubeGeometry,ShaderMaterial,Mesh,RepeatWrapping} from 'three/src/Three'
 import ImprovedNoise from '../assets/js/ImprovedNoise'
 
 const shaderVert = require('../assets/shader/matcapSEM.vert')
@@ -23,7 +23,7 @@ export default class MeshTruffle {
 
     /**
      * [state description]
-     * @param  {object} texture { texture1 : THREE.texture}
+     * @param  {object} texture { texture1 : texture}
      * @type {Object}
      */
     this.state = {
@@ -43,7 +43,7 @@ export default class MeshTruffle {
       vertex : shaderVert,
       uniforms : {
         time: { value: 1.0 },
-        resolution: { value: new THREE.Vector2() },
+        resolution: { value: new Vector2() },
         texture: { type: 't', value: null },
         tNormal: { type: 't', value: null },
         lightDir_value : { value: [0.0,-0.3,0.6]},
@@ -77,12 +77,12 @@ export default class MeshTruffle {
         return t
   }
   _geometry(){
-    this.geometry = new THREE.CubeGeometry(...this.settings.size)
+    this.geometry = new CubeGeometry(...this.settings.size)
   }
   _material(){
     let self = this
 
-      this.material = new THREE.ShaderMaterial( {
+      this.material = new ShaderMaterial( {
         uniforms: self.settings.uniforms,
       	vertexShader: self.settings.vertex,
       	fragmentShader: self.settings.fragment,
@@ -92,12 +92,12 @@ export default class MeshTruffle {
       this.material.uniforms.tNormal.value = this.state.texture.normal
 
       if(this.material.uniforms.texture != undefined){
-        this.material.uniforms.texture.value.wrapS = this.material.uniforms.texture.value.wrapT = THREE.RepeatWrapping;
+        this.material.uniforms.texture.value.wrapS = this.material.uniforms.texture.value.wrapT = RepeatWrapping;
       	this.material.uniforms.texture.value.needsUpdate = true;
       }
     }
   _mesh(){
-    this.mesh = new THREE.Mesh( this.geometry, this.material )
+    this.mesh = new Mesh( this.geometry, this.material )
   }
 
   getDeformedGeometry(timer){
@@ -148,7 +148,7 @@ export default class MeshTruffle {
   /**
    * Get material helper - return the material for the object instance or from a new single instance
    * @method getMaterial
-   * @return {object} THREE.Material
+   * @return {object} Material
    */
   getMaterial(){
     this.material == undefined ? this._material() : null
@@ -157,7 +157,7 @@ export default class MeshTruffle {
   /**
    * Get geometry helper - return the geometry for the object instance or from a new single instance
    * @method getGeometry
-   * @return {object} THREE.Geometry
+   * @return {object} Geometry
    */
   getGeometry(){
     this.geometry == undefined ? this._geometry() : null
@@ -166,7 +166,7 @@ export default class MeshTruffle {
   /**
    * Get mesh helper - return a mesh for the object instance
    * @method getMesh
-   * @return {object} THREE.Mesh
+   * @return {object} Mesh
    */
   getMesh(){
     this.geometry == undefined ? this._geometry() : null

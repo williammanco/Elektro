@@ -2,9 +2,9 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import * as THREE from 'three/src/Three'
+import {Vector3} from 'three/src/Three'
 
-THREE.GPUParticleSystem = require('imports-loader?THREE=three!exports-loader?THREE.GPUParticleSystem!three/examples/js/GPUParticleSystem')
+const GPUParticleSystem = require('imports-loader?THREE=three!exports-loader?THREE.GPUParticleSystem!three/examples/js/GPUParticleSystem')
 
 
 /**
@@ -32,9 +32,9 @@ export default class ParticleEmber {
         maxParticles: 250000
       },
       options:{
-				position: new THREE.Vector3(),
+				position: new Vector3(),
 				positionRandomness: .3,
-				velocity: new THREE.Vector3(),
+				velocity: new Vector3(),
 				velocityRandomness: .5,
 				color: 0xaa88ff,
 				colorRandomness: .2,
@@ -69,7 +69,7 @@ this.tick = 0
   }
 
   _create(){
-    this.particleSystem = new THREE.GPUParticleSystem(this.settings.particleSystem)
+    this.particleSystem = new GPUParticleSystem(this.settings.particleSystem)
 
 			this.state.scene.add( this.particleSystem )
 

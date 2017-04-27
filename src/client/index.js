@@ -2,8 +2,9 @@
 
 /* eslint-disable no-console */
 import 'babel-polyfill'
+
 import { APP_CONTAINER_SELECTOR } from '../shared/config'
-import * as THREE from 'three/src/Three'
+import {Scene,WebGLRenderer,PerspectiveCamera,AmbientLight,SpotLight,JSONLoader,TextureLoader,LoadingManager,BoxHelper,Mesh} from 'three/src/Three'
 import OrbitControls from 'three-orbitcontrols'
 import MeshTruffle from './mesh/MeshTruffle'
 // import MaterialGlow from './material/MaterialGlow'
@@ -21,7 +22,7 @@ const OBJLines = require('file-loader!./assets/obj/lines.obj')
 const OBJLine0 = require('file-loader!./assets/obj/line0.obj')
 const JSONDDD = require('file-loader!./assets/json/DDD.json')
 
-THREE.OBJLoader = require('imports-loader?THREE=three!exports-loader?THREE.OBJLoader!three/examples/js/loaders/OBJLoader')
+const OBJLoader = require('imports-loader?THREE=three!exports-loader?THREE.OBJLoader!three/examples/js/loaders/OBJLoader')
 // THREE.EffectComposer = require('imports-loader?THREE=three!exports-loader?THREE.EffectComposer!three/examples/js/postprocessing/EffectComposer')
 // THREE.RenderPass = require('imports-loader?THREE=three!exports-loader?THREE.RenderPass!three/examples/js/postprocessing/RenderPass');
 // THREE.FXAAShader = require('imports-loader?THREE=three!exports-loader?THREE.FXAAShader!three/examples/js/shaders/FXAAShader');
@@ -45,8 +46,8 @@ require('./assets/css/main.css')
 export default class Elektro {
   constructor() {
     this.state = {
-      scene : new THREE.Scene(),
-      camera : new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 ),
+      scene : new Scene(),
+      camera : new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 ),
       image : {
         normal : imageNormal,
         base : imageBase
@@ -54,7 +55,7 @@ export default class Elektro {
       texture : {}
     }
 
-    this._init()
+  this._init()
   }
   _init(){
     this._renderer()
@@ -76,7 +77,7 @@ export default class Elektro {
   }
   _loader(){
     let self = this
-    this.manager = new THREE.LoadingManager();
+    this.manager = new LoadingManager();
     this.manager.onLoad = function ( ) {
       self._onLoaded()
     }
@@ -85,14 +86,14 @@ export default class Elektro {
     let self = this
     this.state.scene.traverse( function( node ) {
       if ( node.type == 'Mesh' ) {
-        self.state.scene.add( new THREE.BoxHelper( node ) )
+        self.state.scene.add( new BoxHelper( node ) )
       }
     } );
 
   }
   _loadTexture(){
     let self = this
-    this.textureLoader = new THREE.TextureLoader(this.manager)
+    this.textureLoader = new TextureLoader(this.manager)
     Object.keys(self.state.image).forEach(function(key) {
       self.textureLoader.load( self.state.image[key], function ( object ) {
         self.state.texture[key] = object
@@ -101,7 +102,7 @@ export default class Elektro {
   }
   _loadDDD(){
     let self = this
-    this.JSONLoader = new THREE.JSONLoader(this.manager)
+    this.JSONLoader = new JSONLoader(this.manager)
     this.JSONLoader.load(JSONDDD , function ( object ) {
       self.geometryDDD = object
 
@@ -111,11 +112,10 @@ export default class Elektro {
   }
   _loadOBJ(){
     let self = this
-    this.OBJLoader = new THREE.OBJLoader(this.manager)
+    this.OBJLoader = new OBJLoader(this.manager)
     this.materialGlow = new MaterialGlow(self.state).init()
     this.materialLines = this.materialGlow.getMaterial()
     this.OBJLoader.load(OBJLines , function ( object ) {
-
 
       object.traverse( function ( child ) {
 
@@ -133,8 +133,8 @@ export default class Elektro {
     // })
   }
   _lights(){
-    this.state.scene.add( new THREE.AmbientLight( 0x222222 ) );
-    this.spotLight = new THREE.SpotLight( 0xffffff );
+    this.state.scene.add( new AmbientLight( 0x222222 ) );
+    this.spotLight = new SpotLight( 0xffffff );
     this.spotLight.position.set( 0, 30, -200 );
     this.spotLight.angle = Math.PI / 7;
     this.spotLight.penumbra = 0.8;
@@ -172,7 +172,7 @@ export default class Elektro {
     }
     this.materialDDD = new MeshTruffle(this.state).getMaterial()
 
-    this.meshDDD = new THREE.Mesh( this.geometryDDD, this.materialDDD )
+    this.meshDDD = new Mesh( this.geometryDDD, this.materialDDD )
     this.meshDDD.position.z = -200
     this.meshDDD.rotation.x = this.utils.getDegreesToRadiant(90)
     this.meshDDD.rotation.z = this.utils.getDegreesToRadiant(180)
@@ -192,7 +192,7 @@ export default class Elektro {
     this.render()
   }
   _renderer(){
-    this.state.renderer = new THREE.WebGLRenderer({ alpha: true })
+    this.state.renderer = new WebGLRenderer({ alpha: true })
     this.state.renderer.setSize( window.innerWidth, window.innerHeight )
     this.state.renderer.setPixelRatio( window.devicePixelRatio )
     document.body.appendChild( this.state.renderer.domElement )
