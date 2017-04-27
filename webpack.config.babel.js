@@ -7,12 +7,10 @@ import DashboardPlugin from 'webpack-dashboard/plugin'
 import UglifyJSPlugin from 'uglifyjs-webpack-plugin'
 
 const uglify = new UglifyJSPlugin({
-      compress: {
-        warnings: false
-      }
-    })
-
-
+  compress: {
+    warnings: false
+  }
+})
 
 console.log(uglify)
 
