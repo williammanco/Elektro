@@ -9,14 +9,14 @@ import { Vector3, CatmullRomCurve3 }  from 'three/src/Three'
 * @type Class
 */
 export default class CameraTrack {
-  
+
   /**
   * [constructor description]
   * @param  {[type]} state [description]
   * @return {[type]}       [description]
   */
   constructor(state,settings) {
-    let self = this
+    const self = this
 
     /**
     * [state description]
@@ -46,7 +46,7 @@ export default class CameraTrack {
   }
 
   init(){
-    let self = this
+    const self = this
     let camera = this.state.camera
     this.points = []
     for ( let i = 0; i < this.settings.spline.length; i ++ ) {

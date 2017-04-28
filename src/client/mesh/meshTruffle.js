@@ -18,7 +18,7 @@ export default class MeshTruffle {
    * @param  {[type]} state [description]
    * @return {[type]}       [description]
    */
-  constructor(state,settings) {
+  constructor(state, settings) {
     let self = this
 
     /**
@@ -70,8 +70,8 @@ export default class MeshTruffle {
   }
 
   _turbulence( x, y, z ) {
-        var t = -0.5
-        for( var f = 1 ; f <= 100/12 ; f *= 2) {
+        let t = -0.5
+        for( let f = 1 ; f <= 100/12 ; f *= 2) {
             t += Math.abs( this.improvedNoise.noise( f * x, f * y, f * z ) / f )
         }
         return t
@@ -80,7 +80,7 @@ export default class MeshTruffle {
     this.geometry = new CubeGeometry(...this.settings.size)
   }
   _material(){
-    let self = this
+    const self = this
 
       this.material = new ShaderMaterial( {
         uniforms: self.settings.uniforms,
@@ -109,16 +109,16 @@ export default class MeshTruffle {
     this.geometry.computeFaceNormals()
     this.geometry.computeVertexNormals()
     this.geometry.computeMorphNormals()
-    for( var j = 0; j < this.geometry.vertices.length; j++ ) {
-         var v = this.geometry.vertices[ j ]
-         var n = v.clone()
+    for( let j = 0; j < this.geometry.vertices.length; j++ ) {
+         let v = this.geometry.vertices[ j ]
+         let n = v.clone()
          n.normalize()
          v.copy( n )
          v.multiplyScalar( 30 )
-         var f = 0.07
+         let f = 0.07
          this.timer != undefined ? f = 0.0+(Math.cos(this.timer)*0.1) : false
          //var d = - 10 * this.turbulence( f * v.x, f * v.y, f * v.z )
-         var d = 6 * this.improvedNoise.noise( f * v.x, f * v.y, f * v.z )
+         let d = 6 * this.improvedNoise.noise( f * v.x, f * v.y, f * v.z )
          v.add( n.multiplyScalar( d ) )
      }
      return this.geometry

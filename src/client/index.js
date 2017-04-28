@@ -4,7 +4,7 @@
 import 'babel-polyfill'
 
 import { APP_CONTAINER_SELECTOR } from '../shared/config'
-import { Scene, WebGLRenderer, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh } from 'three/src/Three'
+import { Scene, WebGLRenderer, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh, MeshLambertMaterial } from 'three/src/Three'
 import OrbitControls from 'three-orbitcontrols'
 import MeshTruffle from './mesh/MeshTruffle'
 // import MaterialGlow from './material/MaterialGlow'
@@ -12,6 +12,7 @@ import CameraTrack from './Camera/CameraTrack'
 import DotScreenComposer from './postProcessing/DotScreenComposer'
 // import BokehComposer from './postProcessing/BokehComposer'
 import ParticleEmber from './particle/ParticleEmber'
+import GeometrySphereDeformed from './geometry/geometrySphereDeformed'
 
 import Utils from './Utils'
 
@@ -63,7 +64,7 @@ export default class Elektro {
     this._loader()
     this._loadTexture()
     this._loadDDD()
-
+    this._lights()
     this.controls = new OrbitControls(this.state.camera, this.state.renderer.domElement)
     this.controls.enableDamping = true
     this.controls.dampingFactor = 0.25
@@ -76,14 +77,14 @@ export default class Elektro {
     this.state.camera.position.z = 100;
   }
   _loader(){
-    let self = this
+    const self = this
     this.manager = new LoadingManager();
     this.manager.onLoad = function ( ) {
       self._onLoaded()
     }
   }
   _debug(){
-    let self = this
+    const self = this
     this.state.scene.traverse( function( node ) {
       if ( node.type == 'Mesh' ) {
         self.state.scene.add( new BoxHelper( node ) )
@@ -92,7 +93,7 @@ export default class Elektro {
 
   }
   _loadTexture(){
-    let self = this
+    const self = this
     this.textureLoader = new TextureLoader(this.manager)
     Object.keys(self.state.image).forEach(function(key) {
       self.textureLoader.load( self.state.image[key], function ( object ) {
@@ -101,7 +102,7 @@ export default class Elektro {
     });
   }
   _loadDDD(){
-    let self = this
+    const self = this
     this.JSONLoader = new JSONLoader(this.manager)
     this.JSONLoader.load(JSONDDD , function ( object ) {
       self.geometryDDD = object
@@ -111,7 +112,7 @@ export default class Elektro {
     })
   }
   _loadOBJ(){
-    let self = this
+    const self = this
     this.OBJLoader = new OBJLoader(this.manager)
     this.materialGlow = new MaterialGlow(self.state).init()
     this.materialLines = this.materialGlow.getMaterial()
@@ -134,13 +135,13 @@ export default class Elektro {
   }
   _lights(){
     this.state.scene.add( new AmbientLight( 0x222222 ) );
-    this.spotLight = new SpotLight( 0xffffff );
-    this.spotLight.position.set( 0, 30, -200 );
-    this.spotLight.angle = Math.PI / 7;
-    this.spotLight.penumbra = 0.8;
-    this.spotLight.castShadow = true;
-    this.spotLight.lookAt(this.meshDDD.position)
-    this.state.scene.add( this.spotLight );
+    // this.spotLight = new SpotLight( 0xffffff );
+    // this.spotLight.position.set( 0, 30, -200 );
+    // this.spotLight.angle = Math.PI / 7;
+    // this.spotLight.penumbra = 0.8;
+    // this.spotLight.castShadow = true;
+    // this.spotLight.lookAt(this.meshDDD.position)
+    // this.state.scene.add( this.spotLight );
   }
   _onLoaded(){
 
@@ -159,8 +160,12 @@ export default class Elektro {
     // }
     // this.state.scene.add( this.OBJLines )
 
-    this.meshTruffle = new MeshTruffle(this.state).init()
-    this.mesh = this.meshTruffle.getMesh()
+    this.geometryTruffle = new GeometrySphereDeformed()
+    this.materialSimple = new MeshLambertMaterial({ color: 0xffffff })
+    this.mesh = new Mesh(this.geometryTruffle.getDeformedGeometry(),this.materialSimple)
+    this.state.scene.add(this.mesh)
+    // this.meshTruffle = new MeshTruffle(this.state).init()
+    // this.mesh = this.meshTruffle.getMesh()
     this.mesh.geometry.computeFaceNormals()
     this.mesh.geometry.computeVertexNormals()
     this.mesh.geometry.computeMorphNormals()
@@ -206,7 +211,6 @@ export default class Elektro {
   }
 
   render() {
-    let self = this
     let delta = Date.now();
     let timer = delta * 0.0001;
 
@@ -217,17 +221,17 @@ export default class Elektro {
     this.mesh.rotation.x = timer;
     this.mesh.rotation.y = Math.sin(timer*2);
 
-    // this.state.renderer.render( this.state.scene, this.state.camera )
+    this.state.renderer.render( this.state.scene, this.state.camera )
     //  self.composer.render(0.02)
 
-    this.mesh.geometry = this.meshTruffle.getDeformedGeometry(timer)
+    this.mesh.geometry = this.geometryTruffle.getDeformedGeometry(timer)
 
     this.cameraTrack.loop();
 
     //this.particle.render(delta)
     // this.postProcessing.composer.render(0.02)
 
-    this.composer.render()
+    //this.composer.render()
     requestAnimationFrame( this.render.bind(this) )
 
 
