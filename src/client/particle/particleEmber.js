@@ -95,15 +95,15 @@ this.tick = 0
 				this.options.position.x = Math.sin( this.tick * this.spawnerOptions.horizontalSpeed ) * 20;
 				this.options.position.y = Math.sin( this.tick * this.spawnerOptions.verticalSpeed ) * 10;
 				this.options.position.z = Math.sin( this.tick * this.spawnerOptions.horizontalSpeed + this.spawnerOptions.verticalSpeed ) * 5;
-
-				for ( var x = 0; x < this.spawnerOptions.spawnRate * delta; x++ ) {
-
-					// Yep, that's really it.	Spawning particles is super cheap, and once you spawn them, the rest of
-					// their lifecycle is handled entirely on the GPU, driven by a time uniform updated below
-
-					this.particleSystem.spawnParticle( this.options );
-
-				}
+        this.particleSystem.spawnParticle( this.options );
+				// for ( var x = 0; x < this.spawnerOptions.spawnRate * delta; x++ ) {
+        //
+				// 	// Yep, that's really it.	Spawning particles is super cheap, and once you spawn them, the rest of
+				// 	// their lifecycle is handled entirely on the GPU, driven by a time uniform updated below
+        //
+				// 	this.particleSystem.spawnParticle( this.options );
+        //
+				// }
 
 			}
 

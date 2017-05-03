@@ -235,7 +235,7 @@ export default class Elektro {
 
     // this.cameraTrack.loop();
 
-    //this.particle.render(delta)
+    this.particle.render(delta)
     // this.postProcessing.composer.render(0.02)
 
     // this.composer.render()
