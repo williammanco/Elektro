@@ -134,14 +134,22 @@ export default class Elektro {
     // })
   }
   _lights(){
-    this.state.scene.add( new AmbientLight( 0x222222 ) );
-    // this.spotLight = new SpotLight( 0xffffff );
-    // this.spotLight.position.set( 0, 30, -200 );
-    // this.spotLight.angle = Math.PI / 7;
-    // this.spotLight.penumbra = 0.8;
-    // this.spotLight.castShadow = true;
+    // this.state.scene.add( new AmbientLight( 0x222222 ) );
+    this.spotLight = new SpotLight( 0xffffff,.3 )
+    this.spotLight.position.set( 0, 200, -100 )
+    this.spotLight.angle = Math.PI / 7
+    this.spotLight.penumbra = 0.8
+    this.spotLight.castShadow = true
     // this.spotLight.lookAt(this.meshDDD.position)
-    // this.state.scene.add( this.spotLight );
+    this.state.scene.add( this.spotLight )
+
+    this.spotLight2 = new SpotLight( 0xffffff, 0.05 )
+    this.spotLight2.position.set( 100, 100, 200 )
+    this.spotLight2.angle = Math.PI / 7
+    this.spotLight2.penumbra = 1.8
+    this.spotLight2.castShadow = true
+    // this.spotLight.lookAt(this.meshDDD.position)
+    this.state.scene.add( this.spotLight2 )
   }
   _onLoaded(){
 
@@ -159,10 +167,11 @@ export default class Elektro {
     //    this.state.scene.add( this.state.OBJLines[i] )
     // }
     // this.state.scene.add( this.OBJLines )
+    this.materialDDD = new MeshTruffle(this.state).getMaterial()
 
     this.geometryTruffle = new GeometrySphereDeformed()
     this.materialSimple = new MeshLambertMaterial({ color: 0xffffff })
-    this.mesh = new Mesh(this.geometryTruffle.getDeformedGeometry(),this.materialSimple)
+    this.mesh = new Mesh(this.geometryTruffle.getDeformedGeometry(),this.materialDDD)
     this.state.scene.add(this.mesh)
     // this.meshTruffle = new MeshTruffle(this.state).init()
     // this.mesh = this.meshTruffle.getMesh()
@@ -175,7 +184,6 @@ export default class Elektro {
     if(DEBUG){
       this._debug()
     }
-    this.materialDDD = new MeshTruffle(this.state).getMaterial()
 
     this.meshDDD = new Mesh( this.geometryDDD, this.materialDDD )
     this.meshDDD.position.z = -200
@@ -185,8 +193,8 @@ export default class Elektro {
     this.meshDDD.scale.set(20,20,20)
     this.state.scene.add(this.meshDDD)
 
-    let lookAt = this.meshDDD.position
-    this.cameraTrack = new CameraTrack(this.state,{lookAt : [lookAt.x,lookAt.y,lookAt.z]}).init()
+    // let lookAt = this.meshDDD.position
+    // this.cameraTrack = new CameraTrack(this.state,{lookAt : [lookAt.x,lookAt.y,lookAt.z]}).init()
 
     this.particle = new ParticleEmber(this.state).init()
 
@@ -205,7 +213,7 @@ export default class Elektro {
   }
 
   _initPostProcessing(){
-    this.composer = new DotScreenComposer(this.state).init()
+    // this.composer = new DotScreenComposer(this.state).init()
     // this.composer.addPass(new DotScreenComposer(this.state).getPass())
     // this.composer.closeComposer()
   }
@@ -223,15 +231,14 @@ export default class Elektro {
 
     this.state.renderer.render( this.state.scene, this.state.camera )
     //  self.composer.render(0.02)
+    this.mesh.geometry = this.geometryTruffle.getDeformedGeometry(this.utils.getLoopInterval(timer,1,1.5))
 
-    this.mesh.geometry = this.geometryTruffle.getDeformedGeometry(timer)
-
-    this.cameraTrack.loop();
+    // this.cameraTrack.loop();
 
     //this.particle.render(delta)
     // this.postProcessing.composer.render(0.02)
 
-    //this.composer.render()
+    // this.composer.render()
     requestAnimationFrame( this.render.bind(this) )
 
 

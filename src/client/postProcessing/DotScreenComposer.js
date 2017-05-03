@@ -21,15 +21,15 @@ export default class DotScreenComposer extends Composer {
   * @param  {[type]}    settings [description]
   * @return {[type]}    [description]
   */
-  constructor(state,settings) {
+  constructor( state, settings ) {
     super()
-    let self = this
+    const self = this
 
     this.state = {}
-    state ? Object.assign(self.state, state) : null
+    state ? Object.assign( self.state, state ) : null
 
     this.settings = {}
-    settings ? Object.assign(self.settings, settings) : null
+    settings ? Object.assign( self.settings, settings ) : null
   }
 
 

@@ -25,4 +25,8 @@ export default class Utils {
   getDegreesToRadiant(degrees){
     return degrees * Math.PI / 180;
   }
+
+  getLoopInterval( number, min, max ){
+    return Math.abs(Math.sin(number)) * (max - min) + min
+  }
 }

@@ -23,10 +23,10 @@ export default class BokehComposer extends Composer {
   */
   constructor(state,settings) {
     super()
-    let self = this
+    const self = this
 
     this.state = {}
-    state ? Object.assign(self.state, state) : null
+    state ? Object.assign( self.state, state ) : null
 
     this.settings = {
       focus: 		1.0,
@@ -35,11 +35,11 @@ export default class BokehComposer extends Composer {
       width: window.innerWidth,
       height: window.innerHeight
     }
-    settings ? Object.assign(self.settings, settings) : null
+    settings ? Object.assign( self.settings, settings ) : null
   }
 
   _setPass(){
-    this.bokehPass = new BokehPass( this.state.scene, this.state.camera, this.settings)
+    this.bokehPass = new BokehPass( this.state.scene, this.state.camera, this.settings )
     this.bokehPass.renderToScreen = true
   }
 

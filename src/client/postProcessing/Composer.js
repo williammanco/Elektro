@@ -7,6 +7,7 @@ const EffectComposer = require('imports-loader?THREE=three!exports-loader?THREE.
 const RenderPass = require('imports-loader?THREE=three!exports-loader?THREE.RenderPass!three/examples/js/postprocessing/RenderPass')
 const ShaderPass = require('imports-loader?THREE=three!exports-loader?THREE.ShaderPass!three/examples/js/postprocessing/ShaderPass')
 const MaskPass = require('imports-loader?THREE=three!exports-loader?THREE.MaskPass!three/examples/js/postprocessing/MaskPass')
+const FXAAShader = require('imports-loader?THREE=three!exports-loader?THREE.FXAAShader!three/examples/js/shaders/FXAAShader')
 
 /**
 * DOF
@@ -38,9 +39,11 @@ export default class Composer {
     this.state.postProcessing = {}
     this.state.renderPass == undefined ? this.state.renderPass = new RenderPass( this.state.scene, this.state.camera ) : null
     this.state.effectComposer == undefined ? this.state.effectComposer = new EffectComposer( this.state.renderer ) : null
+    this.effectFXAA = new ShaderPass(FXAAShader)
     this.copyShader = new ShaderPass(CopyShader)
     this.state.effectComposer.addPass( this.state.renderPass )
     this.state.postProcessing.composer = this.state.effectComposer
+    this.effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight );
   }
 
   _closeComposer(){
@@ -56,8 +59,8 @@ export default class Composer {
     return this.state.postProcessing.composer
   }
 
-  addPass(pass){
-    this.state.postProcessing.composer.addPass(pass)
+  addPass( pass ){
+    this.state.postProcessing.composer.addPass( pass )
   }
 
   closeComposer(){
