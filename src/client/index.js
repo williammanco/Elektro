@@ -4,11 +4,11 @@
 import 'babel-polyfill'
 
 import { APP_CONTAINER_SELECTOR } from '../shared/config'
-import { Scene, WebGLRenderer, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh, MeshLambertMaterial } from 'three/src/Three'
-import OrbitControls from 'three-orbitcontrols'
+import { Scene, WebGLRenderer, Vector3, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh, MeshLambertMaterial } from 'three/src/Three'
 import MeshTruffle from './mesh/MeshTruffle'
 import CameraTrack from './Camera/CameraTrack'
 import GeometrySphereDeformed from './geometry/geometrySphereDeformed'
+import 'jquery'
 
 import Utils from './Utils'
 
@@ -16,7 +16,7 @@ const DEBUG = false
 const imageBase = require('./assets/img/matblender.png')
 const imageNormal = require('./assets/img/fresh_snow-normal.jpg')
 const JSONDDD = require('file-loader!./assets/json/DDD.json')
-const OBJLoader = require('imports-loader?THREE=three!exports-loader?THREE.OBJLoader!three/examples/js/loaders/OBJLoader')
+const OBJLoader = require('three/examples/js/loaders/OBJLoader')
 
 require('./assets/css/main.css')
 
@@ -40,10 +40,7 @@ export default class Elektro {
     this._loadTexture()
     this._loadDDD()
     this._lights()
-    this.controls = new OrbitControls(this.state.camera, this.state.renderer.domElement)
-    this.controls.enableDamping = true
-    this.controls.dampingFactor = 0.25
-    this.controls.enableZoom = false
+
 
     this.utils = new Utils()
 
@@ -117,6 +114,9 @@ export default class Elektro {
     this.meshDDD.rotation.z = this.utils.getDegreesToRadiant(180)
     this.meshDDD.scale.set(20,20,20)
     this.state.scene.add(this.meshDDD)
+
+
+
     this.render()
 
     if(DEBUG){
@@ -139,6 +139,7 @@ export default class Elektro {
 
     this.state.renderer.render( this.state.scene, this.state.camera )
     this.mesh.geometry = this.geometryTruffle.getDeformedGeometry(this.utils.getLoopInterval(timer,1,1.5))
+
 
     requestAnimationFrame( this.render.bind(this) )
   }

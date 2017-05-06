@@ -1,6 +1,7 @@
 // @flow
 
 import path from 'path'
+import webpack from 'webpack'
 import { WDS_PORT } from './src/shared/config'
 import { isProd } from './src/shared/util'
 import DashboardPlugin from 'webpack-dashboard/plugin'
@@ -25,7 +26,13 @@ export default {
     publicPath: isProd ? '/static/' : `http://localhost:${WDS_PORT}/dist/`,
   },
   plugins: [
-    new DashboardPlugin()
+    new DashboardPlugin(),
+    new webpack.ProvidePlugin({
+    $: "jquery",
+    jQuery: "jquery",
+    "window.$": "jquery",
+    "window.jQuery": "jquery"
+    })
   ],
   module: {
     rules: [
