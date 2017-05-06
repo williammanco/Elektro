@@ -7,11 +7,7 @@ import { APP_CONTAINER_SELECTOR } from '../shared/config'
 import { Scene, WebGLRenderer, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh, MeshLambertMaterial } from 'three/src/Three'
 import OrbitControls from 'three-orbitcontrols'
 import MeshTruffle from './mesh/MeshTruffle'
-// import MaterialGlow from './material/MaterialGlow'
 import CameraTrack from './Camera/CameraTrack'
-import DotScreenComposer from './postProcessing/DotScreenComposer'
-// import BokehComposer from './postProcessing/BokehComposer'
-import ParticleEmber from './particle/ParticleEmber'
 import GeometrySphereDeformed from './geometry/geometrySphereDeformed'
 
 import Utils from './Utils'
@@ -53,10 +49,10 @@ export default class Elektro {
         normal : imageNormal,
         base : imageBase
       },
-      texture : {}
+      texture : {},
+      time : 0
     }
-
-  this._init()
+    this._init()
   }
   _init(){
     this._renderer()
@@ -117,7 +113,6 @@ export default class Elektro {
     this.materialGlow = new MaterialGlow(self.state).init()
     this.materialLines = this.materialGlow.getMaterial()
     this.OBJLoader.load(OBJLines , function ( object ) {
-
       object.traverse( function ( child ) {
 
         child.material = self.materialLines
@@ -125,7 +120,6 @@ export default class Elektro {
       object.scale.set(26,26,26)
       object.rotation.x = self.utils.getDegreesToRadiant(90)
       self.OBJLines = object
-
     })
     // this.OBJLoader = new THREE.OBJLoader(this.manager)
     // this.OBJLoader.load(OBJLine0 , function ( object ) {
@@ -181,6 +175,7 @@ export default class Elektro {
 
     this.mesh.position.z = 20
 
+
     if(DEBUG){
       this._debug()
     }
@@ -196,7 +191,7 @@ export default class Elektro {
     // let lookAt = this.meshDDD.position
     // this.cameraTrack = new CameraTrack(this.state,{lookAt : [lookAt.x,lookAt.y,lookAt.z]}).init()
 
-    this.particle = new ParticleEmber(this.state).init()
+    // this.particle = new ParticleEmber(this.state).init()
 
 
 
@@ -213,21 +208,22 @@ export default class Elektro {
   }
 
   _initPostProcessing(){
-    // this.composer = new DotScreenComposer(this.state).init()
+     //this.composer = new SparksDotComposer(this.state).init()
     // this.composer.addPass(new DotScreenComposer(this.state).getPass())
     // this.composer.closeComposer()
   }
 
   render() {
-    let delta = Date.now();
-    let timer = delta * 0.0001;
+    let delta = Date.now()
+    let timer = delta * 0.0001
+    this.state.time++
 
     this.mesh.rotation.x += 0.01
     this.mesh.rotation.y += 0.02
 
 
-    this.mesh.rotation.x = timer;
-    this.mesh.rotation.y = Math.sin(timer*2);
+    this.mesh.rotation.x = timer
+    this.mesh.rotation.y = Math.sin(timer*2)
 
     this.state.renderer.render( this.state.scene, this.state.camera )
     //  self.composer.render(0.02)
