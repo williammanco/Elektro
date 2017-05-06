@@ -140,15 +140,6 @@ export default class Elektro {
     this.state.renderer.render( this.state.scene, this.state.camera )
     this.mesh.geometry = this.geometryTruffle.getDeformedGeometry(this.utils.getLoopInterval(timer,1,1.5))
 
-<<<<<<< HEAD
-=======
-    // this.cameraTrack.loop();
-
-    this.particle.render(delta)
-    // this.postProcessing.composer.render(0.02)
-
-    // this.composer.render()
->>>>>>> 2839eaafd824e0658b5f7800fa9dbbcbfa4fb686
     requestAnimationFrame( this.render.bind(this) )
   }
 }

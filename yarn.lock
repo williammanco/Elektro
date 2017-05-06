@@ -3396,6 +3396,10 @@ imports-loader@^0.7.1:
     loader-utils "^1.0.2"
     source-map "^0.5.6"
 
+improved-noise@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/improved-noise/-/improved-noise-0.0.3.tgz#b7f5c36789ea3e88f5f8734a3d50ed0efabb7ccd"
+
 imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
@@ -4015,6 +4019,10 @@ jodid25519@^1.0.0:
   resolved "https://registry.yarnpkg.com/jodid25519/-/jodid25519-1.0.2.tgz#06d4912255093419477d425633606e0e90782967"
   dependencies:
     jsbn "~0.1.0"
+
+jquery@^2.1.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.2.4.tgz#2c89d6889b5eac522a7eea32c14521559c6cbf02"
 
 js-base64@^2.1.9:
   version "2.1.9"
@@ -6540,9 +6548,20 @@ three-orbitcontrols@^1.1.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/three-orbitcontrols/-/three-orbitcontrols-1.2.0.tgz#4c4cf39918b87f10af0a11cf7fd8a2bdfc33b6ca"
 
+three@^0.73.0:
+  version "0.73.2"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.73.2.tgz#2a3ebac10de8a1bee65242e3a69fc4c4187c9695"
+
 three@^0.84.0:
   version "0.84.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.84.0.tgz#95be85a55a0fa002aa625ed559130957dcffd918"
+
+threejs-particle-shader@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/threejs-particle-shader/-/threejs-particle-shader-0.3.0.tgz#f4f3ac17a566774bed6205be69881fe2badf68da"
+  dependencies:
+    jquery "^2.1.4"
+    three "^0.73.0"
 
 throat@^3.0.0:
   version "3.0.0"

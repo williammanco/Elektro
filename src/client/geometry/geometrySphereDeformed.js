@@ -3,7 +3,7 @@
 /* eslint-disable no-console */
 import 'babel-polyfill'
 import { CubeGeometry } from 'three/src/Three'
-import ImprovedNoise from '../assets/js/ImprovedNoise'
+import ImprovedNoise from 'improved-noise'
 
 export default class geometrySphereDeformed {
   /**

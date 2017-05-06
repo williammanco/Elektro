@@ -23,7 +23,9 @@
   },
   "dependencies": {
     "gsap": "^1.19.1",
+    "improved-noise": "^0.0.3",
     "three": "^0.84.0",
+    "threejs-particle-shader": "^0.3.0",
     "web-audio-analyser": "^2.0.1"
   },
   "devDependencies": {
