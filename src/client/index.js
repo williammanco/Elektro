@@ -8,7 +8,11 @@ import { Scene, WebGLRenderer, Vector3, PerspectiveCamera, AmbientLight, SpotLig
 import MeshTruffle from './mesh/MeshTruffle'
 import CameraTrack from './Camera/CameraTrack'
 import GeometrySphereDeformed from './geometry/geometrySphereDeformed'
+import ParticleSnow from './particle/particleSnow'
 import 'jquery'
+const TrackballControls = require('imports-loader?THREE=three!exports-loader?THREE.TrackballControls!three/examples/js/controls/TrackballControls.js')
+
+
 
 import Utils from './Utils'
 
@@ -24,12 +28,13 @@ export default class Elektro {
   constructor() {
     this.state = {
       scene : new Scene(),
-      camera : new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 ),
+      camera : new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000),
       image : {
         normal : imageNormal,
         base : imageBase
       },
-      texture : {}
+      texture : {},
+      time : 0
     }
     this._init()
   }
@@ -41,6 +46,11 @@ export default class Elektro {
     this._loadDDD()
     this._lights()
 
+    this.controls = new THREE.TrackballControls( this.state.camera, this.state.renderer.domElement );
+    this.controls.rotateSpeed = 5.0;
+    this.controls.zoomSpeed = 2.2;
+    this.controls.panSpeed = 1;
+    this.controls.dynamicDampingFactor = 0.3;
 
     this.utils = new Utils()
 
@@ -107,15 +117,18 @@ export default class Elektro {
     this.mesh.geometry.computeMorphNormals()
 
     this.mesh.position.z = 20
+    //
+    // this.meshDDD = new Mesh( this.geometryDDD, this.materialDDD )
+    // this.meshDDD.position.z = -200
+    // this.meshDDD.rotation.x = this.utils.getDegreesToRadiant(90)
+    // this.meshDDD.rotation.z = this.utils.getDegreesToRadiant(180)
+    // this.meshDDD.scale.set(20,20,20)
+    // this.state.scene.add(this.meshDDD)
 
-    this.meshDDD = new Mesh( this.geometryDDD, this.materialDDD )
-    this.meshDDD.position.z = -200
-    this.meshDDD.rotation.x = this.utils.getDegreesToRadiant(90)
-    this.meshDDD.rotation.z = this.utils.getDegreesToRadiant(180)
-    this.meshDDD.scale.set(20,20,20)
-    this.state.scene.add(this.meshDDD)
+    // this.particleSystem = new ParticleSparks(this.state).init()
 
-
+    this.particleSystem = new ParticleSnow()
+    this.state.scene.add(this.particleSystem);
 
     this.render()
 
@@ -133,13 +146,18 @@ export default class Elektro {
   render() {
     let delta = Date.now()
     let timer = delta * 0.0001
+    this.state.time++
 
     this.mesh.rotation.x = timer
     this.mesh.rotation.y = Math.sin(timer*2)
-
-    this.state.renderer.render( this.state.scene, this.state.camera )
     this.mesh.geometry = this.geometryTruffle.getDeformedGeometry(this.utils.getLoopInterval(timer,1,1.5))
 
+    this.controls.update();
+
+    this.state.renderer.render( this.state.scene, this.state.camera )
+
+    // this.particleSystem.render(this.state.time)
+    this.particleSystem.update()
 
     requestAnimationFrame( this.render.bind(this) )
   }

@@ -30,6 +30,8 @@ export default {
     new webpack.ProvidePlugin({
     $: "jquery",
     jQuery: "jquery",
+    THREE: "three",
+    "window.THREE": "three",
     "window.$": "jquery",
     "window.jQuery": "jquery"
     })
