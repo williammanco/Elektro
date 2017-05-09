@@ -13,13 +13,19 @@ export default class Utils {
     multiply == undefined ? multiply = 45 : null
     return Math.floor(Math.random()*11)*multiply
   }
+  
   getRandomSign(){
     return Math.sign(Math.random() < 0.5 ? -1 : 1)
   }
+
   getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  getRandomArbitrary(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
   }
 
   getDegreesToRadiant(degrees){

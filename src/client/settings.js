@@ -10,9 +10,10 @@ export default {
     base : imageBase
   },
   world: {
-    width: 800,
-    height: 3200,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    depth : 500,
     start: 0,
-    end: -1050
+    end: -400
   }
 }

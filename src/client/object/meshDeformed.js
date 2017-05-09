@@ -2,6 +2,7 @@ import { Object3D, Vector2, CubeGeometry, ShaderMaterial, Mesh, RepeatWrapping }
 import settings from '../settings.js'
 import ImprovedNoise from 'improved-noise'
 import Utils from '../utils'
+import { TimelineMax } from 'gsap'
 
 const shaderVert = require('../assets/shader/matcapSEM.vert')
 const shaderFrag = require('../assets/shader/matcapSEM_blend.frag')
@@ -12,7 +13,7 @@ export default class meshDeformed extends Object3D{
     const self = this
 
     this.options = {
-      size : [40, 40, 40, 40, 40, 40],
+      size : [60, 60, 60, 60, 60, 60],
       fragment : shaderFrag,
       vertex : shaderVert,
       uniforms : {
@@ -51,6 +52,10 @@ export default class meshDeformed extends Object3D{
     this.mesh = new Mesh( this.geometry, this.material )
     this.improvedNoise = new ImprovedNoise()
     this.mesh.geometry = this.getDeformedGeometry()
+    this.mesh.scale.set(2,2,2)
+    this.deform = {
+      delta :1.5
+    }
     this.add(this.mesh)
   }
 
@@ -78,9 +83,30 @@ export default class meshDeformed extends Object3D{
      return this.geometry
   }
 
+  explodeInit(){
+    this.timelineExplode = new TimelineMax({ paused: true})
+    this.timelineExplode
+    .to(this.mesh.rotation, 10, { x : 5, y : 5, ease: Power4.easeInOut},0)
+    .to(this.mesh.scale, 10, { x : 6, y : 6, z :6, ease: Power4.easeInOut},0)
+    .to(this.deform, 10, { delta: .5, ease: Power4.easeInOut},0)
+  }
+
+  explodePlay(){
+    this.timelineExplode.play()
+  }
+
+  explodeReturn(){
+    this.timelineExplode.reverse().timeScale(1.5)
+  }
+
   update(delta) {
-    this.mesh.rotation.x = delta
-    this.mesh.rotation.y = Math.sin(delta*2)
-    this.mesh.geometry = this.getDeformedGeometry(this.utils.getLoopInterval(delta,1,1.5))
+    this.mesh.rotation.x = delta*.5
+    this.mesh.rotation.y = delta*.2
+
+    //this.mesh.rotation.y = Math.sin(delta*2)
+    this.mesh.geometry = this.getDeformedGeometry(this.deform.delta + this.utils.getLoopInterval(delta,1,1.5))
+    // this.mesh.rotation.x = delta
+    // this.mesh.rotation.y = Math.sin(delta*2)
+    // this.mesh.geometry = this.getDeformedGeometry(this.utils.getLoopInterval(delta,1,1.5))
   }
 }
