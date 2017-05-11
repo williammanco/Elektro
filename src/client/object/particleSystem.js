@@ -1,4 +1,4 @@
-import { Object3D, BufferAttribute, BufferGeometry, ShaderMaterial, Points, AdditiveBlending, Color } from 'three'
+import { Object3D, TextureLoader, BufferAttribute, BufferGeometry, RingBufferGeometry, ShaderMaterial, Points, AdditiveBlending, Color } from 'three'
 import settings from '../settings.js'
 import Utils from '../utils.js'
 const vert = require('../assets/shader/snow.vert')
@@ -19,16 +19,20 @@ export default class ParticleSystem extends Object3D{
       y: settings.world.height/2,
       z: settings.world.depth/3
     }
-    this.particlesCount = 100000
-    this.positions = new Float32Array(this.particlesCount * 3)
-    this.alpha = new Float32Array( this.particlesCount * 1 )
+    this.geometryRing = new THREE.TorusBufferGeometry( 100, 10, 16, 100 )
+    this.particlesCount = this.geometryRing.attributes.position.array.length/3
+    this.positions = this.geometryRing.attributes.position.array
+    console.log(this.particlesCount)
 
-    for(let i = 0, j = 0; i < this.particlesCount; i++, j += 3) {
-      this.positions[j + 0] = Math.sin(i) * this.zone.x - this.zone.x * 0.5
-      this.positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
-      this.positions[j + 2] = Math.random() * this.zone.z - this.zone.z * 0.5
-      this.alpha[j] = 1
-    }
+    // this.positions = new Float32Array(this.particlesCount * 3)
+    this.alpha = new Float32Array( this.particlesCount * 1 )
+    //
+    // for(let i = 0, j = 0; i < this.particlesCount; i++, j += 3) {
+    //   this.positions[j + 0] = Math.sin(i) * this.zone.x - this.zone.x * 0.5
+    //   this.positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
+    //   this.positions[j + 2] = Math.random() * this.zone.z - this.zone.z * 0.5
+    //   this.alpha[j] = 1
+    // }
 
     this.geom = new BufferGeometry()
     this.geom.addAttribute('position', new BufferAttribute(this.positions, 3))
@@ -39,7 +43,7 @@ export default class ParticleSystem extends Object3D{
       vertexShader: vert,
       fragmentShader: frag,
       uniforms: {
-        'texture': { type: 't', value: new THREE.TextureLoader().load( 'textures/particle2.png') },
+        'texture': { type: 't', value: new TextureLoader().load( 'textures/particle2.png') },
         'color': { type: 'c', value: new Color(0xd200ff) }
       },
       transparent: true,
@@ -49,7 +53,6 @@ export default class ParticleSystem extends Object3D{
     this.particles = new Points(this.geom, this.mat)
     this.add(this.particles)
   }
-
   sparks(){
     let positions = this.particles.geometry.attributes.position.array
     let alpha = this.particles.geometry.attributes.alpha.array
@@ -85,13 +88,21 @@ export default class ParticleSystem extends Object3D{
 
   update() {
 
-    if(this.explodeStart){
-      this.explode()
+    let positions = this.particles.geometry.attributes.position.array
+    let alpha = this.particles.geometry.attributes.alpha.array
+    for(let i = 0, j = 0; i < this.particlesCount; i++, j += 3) {
+      // // positions[j + 0] -= this.velocity.x
+      // positions[j + 0] -= Math.sin(i) * 0.5
+      // positions[j + 1]  += 0.5
 
-    }else{
-      this.sparks()
+      alpha[i] = 1
+
+      // if(positions[j + 1] > (this.zone.y*0.5)) {
+      //   positions[j + 0] = Math.random() * this.zone.x - this.zone.x * 0.5
+      //   positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
+      //   alpha[i] = 1
+      // }
     }
-
     this.particles.geometry.attributes.alpha.needsUpdate = true
     this.particles.geometry.attributes.position.needsUpdate = true
   }
