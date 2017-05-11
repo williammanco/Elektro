@@ -1,4 +1,4 @@
-import { Object3D, Vector2, CubeGeometry, ShaderMaterial, Mesh, RepeatWrapping } from 'three'
+import {CatmullRomCurve3,Vector3, Object3D, Vector2, CubeGeometry, ShaderMaterial, Mesh, RepeatWrapping } from 'three'
 import settings from '../settings.js'
 import ImprovedNoise from 'improved-noise'
 import Utils from '../utils'
@@ -58,7 +58,28 @@ export default class meshDeformed extends Object3D{
     }
     this.add(this.mesh)
   }
+  setTrack(){
+    let self = this
+    this._options = {
+      spline : [
+        [0,20,0],
+        [300,25,0],
+        [300,20,300],
+        [0,25,0],
+        [0,20,0]
+      ],
+      lookAt : [0,0,0]
+    }
 
+    this._points = []
+    for ( let i = 0; i < this._options.spline.length; i ++ ) {
+      this._points.push(new Vector3(...self._options.spline[i]))
+    }
+    this._spline = new CatmullRomCurve3(this._points)
+    this._spline.closed = true
+    this.camPosIndex = 0;
+    this.position.z = 5;
+  }
   getDeformedGeometry(delta){
     this.geometry == undefined ? this._geometry() : null
     delta != undefined ? this.timer = delta : null
@@ -108,5 +129,24 @@ export default class meshDeformed extends Object3D{
     // this.mesh.rotation.x = delta
     // this.mesh.rotation.y = Math.sin(delta*2)
     // this.mesh.geometry = this.getDeformedGeometry(this.utils.getLoopInterval(delta,1,1.5))
+    //
+    // if(this._spline){
+    //
+    //   this.camPosIndex += 1;
+    //   if (this.camPosIndex > 1000) {
+    //      this.camPosIndex = 0;
+    //   }
+    //   let camPos = this._spline.getPoint(this.camPosIndex / 1000);
+    //   let camRot = this._spline.getTangent(this.camPosIndex / 1000);
+    //
+    //   this.position.x = camPos.x;
+    //   this.position.y = camPos.y;
+    //   this.position.z = camPos.z;
+    //
+    //   this.rotation.x = camRot.x;
+    //   this.rotation.y = camRot.y;
+    //   this.rotation.z = camRot.z;
+    //
+    // }
   }
 }

@@ -7,7 +7,8 @@ import { Scene, WebGLRenderer, Clock, Vector3, PerspectiveCamera, AmbientLight, 
 import TweenMax from 'gsap'
 import settings from './settings.js'
 import ParticleSystem from './object/particleSystem'
-// import MeshDeformed from './object/meshDeformed'
+import CameraTrack from './object/CameraTrack'
+import MeshDeformed from './object/meshDeformed'
 
 export default class Canvas {
   constructor( width, height ) {
@@ -15,10 +16,11 @@ export default class Canvas {
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.renderer.setSize( width, height )
     // this.renderer.setClearColor(0x000000)
-    this.camera =  new PerspectiveCamera( 75, width / height, 1, 10000)
+    this.camera =  new CameraTrack( 75, width / height, 1, 10000)
     this.camera.position.x = 0
     this.camera.position.y = 0
     this.camera.position.z = 200
+
     // this.camera.lookAt(0, 20, settings.world.height)
     this.clock = new Clock()
     this.scene = new Scene()
@@ -45,15 +47,16 @@ export default class Canvas {
     })
   }
   onLoaderComplete() {
-    // this.meshDeformed = new MeshDeformed()
-    // this.scene.add(this.meshDeformed)
+    this.meshDeformed = new MeshDeformed()
+    this.scene.add(this.meshDeformed)
 
     this.particleSystem = new ParticleSystem()
     this.scene.add(this.particleSystem)
 
+
     this.isReady = true
 
-    // this.meshDeformed.explodeInit()
+    this.meshDeformed.explodeInit()
     this.timelineCamera()
     this.events()
 
@@ -71,7 +74,7 @@ export default class Canvas {
     document.addEventListener('keyup', (event) => {
       const keyName = event.key;
       if(event.code == 'Space'){
-        // this.meshDeformed.explodeReturn()
+        this.meshDeformed.explodeReturn()
         this.timelineCamera.reverse()
         this.particleSystem.explodeStart = false
 
@@ -106,7 +109,8 @@ export default class Canvas {
     let delta = this.clock.getDelta()
     this.time += 1/60
     this.particleSystem.update()
-    // this.meshDeformed.update(this.time)
+    this.meshDeformed.update(this.time)
+    this.camera.update()
 
   }
   render() {
