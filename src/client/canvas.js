@@ -3,12 +3,12 @@
 /* eslint-disable no-console */
 import 'babel-polyfill'
 
-import { Scene, WebGLRenderer, Clock, Vector3, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh, MeshLambertMaterial } from 'three/src/Three'
+import { Scene, FontLoader, WebGLRenderer, Clock, Vector3, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh, MeshLambertMaterial } from 'three/src/Three'
 import TweenMax from 'gsap'
 import settings from './settings.js'
 import ParticleSystem from './object/particleSystem'
-import CameraTrack from './object/CameraTrack'
 import MeshDeformed from './object/meshDeformed'
+import TextWinner from './object/textWinner'
 
 export default class Canvas {
   constructor( width, height ) {
@@ -16,12 +16,12 @@ export default class Canvas {
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.renderer.setSize( width, height )
     // this.renderer.setClearColor(0x000000)
-    this.camera =  new CameraTrack( 75, width / height, 1, 10000)
+    this.camera =  new PerspectiveCamera( 75, width / height, 1, 10000)
     this.camera.position.x = 0
     this.camera.position.y = 0
     this.camera.position.z = 200
 
-    // this.camera.lookAt(0, 20, settings.world.height)
+    this.camera.lookAt(0, 20, settings.world.height)
     this.clock = new Clock()
     this.scene = new Scene()
     this.time = 0
@@ -34,7 +34,19 @@ export default class Canvas {
     this.manager.onLoad = function ( ) {
       self.onLoaderComplete()
     }
+    this.loadFont()
     this.loadTexture()
+  }
+  loadFont(){
+    const self = this
+
+    this.textLoader = new FontLoader(this.manager);
+    Object.keys(settings.fonts).forEach(function(key) {
+      self.textLoader.load( settings.fonts[key], function ( object ) {
+        settings.fonts[key] = object
+      })
+    })
+
   }
   loadTexture(){
     const self = this
@@ -50,13 +62,18 @@ export default class Canvas {
     this.meshDeformed = new MeshDeformed()
     this.scene.add(this.meshDeformed)
 
+    this.textWinner = new TextWinner()
+    // this.textWinner.setMesh()
+    settings.textWinnerGeometry = this.textWinner.geometry
+    this.scene.add(this.textWinner)
+
     this.particleSystem = new ParticleSystem()
     this.scene.add(this.particleSystem)
 
-
     this.isReady = true
+    this.particleSystem.timelineInit()
 
-    this.meshDeformed.explodeInit()
+    this.meshDeformed.timelineInit()
     this.timelineCamera()
     this.events()
 
@@ -66,9 +83,9 @@ export default class Canvas {
     document.addEventListener('keydown', (event) => {
       const keyName = event.key;
       if(event.code == 'Space'){
-        // this.meshDeformed.explodePlay()
+        this.meshDeformed.explodePlay()
         this.timelineCamera.play()
-        this.particleSystem.explodeStart = true
+        this.particleSystem.explodeStart = this.meshDeformed.explodeStart = true
       }
     }, false);
     document.addEventListener('keyup', (event) => {
@@ -76,7 +93,7 @@ export default class Canvas {
       if(event.code == 'Space'){
         this.meshDeformed.explodeReturn()
         this.timelineCamera.reverse()
-        this.particleSystem.explodeStart = false
+        this.particleSystem.explodeStart = this.meshDeformed.explodeStart = false
 
       }
     }, false);
@@ -99,18 +116,17 @@ export default class Canvas {
   timelineCamera(){
     this.timelineCamera = new TimelineMax({ paused: true})
     this.timelineCamera
-    .to(this.camera.position, 9, { z: 600, ease: Power3.easeInOut},0)
+    .to(this.camera.position, settings.explode.time, { z: 400, ease: Power4.easeInOut},0)
 
     this.camera.needsUpdate = true
   }
 
-  update() {
+  update(state) {
     if (!this.isReady) { return }
     let delta = this.clock.getDelta()
     this.time += 1/60
-    this.particleSystem.update()
-    this.meshDeformed.update(this.time)
-    this.camera.update()
+    this.particleSystem.update(state)
+    this.meshDeformed.update(state, this.time)
 
   }
   render() {

@@ -6,43 +6,34 @@ const frag = require('../assets/shader/snow.frag')
 // const particleImage = require('../textures/particle2.png')
 
 export default class ParticleSystem extends Object3D{
-  constructor() {
+  constructor(state) {
     super()
+
     this.utils = new Utils()
     this.explodeStart = false
     this.velocity = {
       x: 0.0,
-      y: -1.5
+      y: 0.5
     }
     this.zone = {
       x: settings.world.width/2,
       y: settings.world.height/2,
-      z: settings.world.depth/3
+      z: settings.world.depth/2
     }
 
-        let points = [];
-        points.push(new THREE.Vector3(0, 20, 0));
-        points.push(new THREE.Vector3(300, 25, 0));
-        points.push(new THREE.Vector3(300, 20, 300));
-        points.push(new THREE.Vector3(0, 25, 300));
-        points.push(new THREE.Vector3(0, 20, 0));
-
-    this.geometryRing = new THREE.TorusBufferGeometry( 100, 10, 16, 100 )
-    this.geometryRing =  new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points), 50, 10, 50, false);
-
-    this.particlesCount = this.geometryRing.attributes.position.array.length/3
-    this.positions = this.geometryRing.attributes.position.array
-    console.log(this.particlesCount)
-console.log(this.geometryRing)
-    // this.positions = new Float32Array(this.particlesCount * 3)
+    this.particlesCount = 30000
+    this.positions = new Float32Array(this.particlesCount * 3)
     this.alpha = new Float32Array( this.particlesCount * 1 )
-    //
-    // for(let i = 0, j = 0; i < this.particlesCount; i++, j += 3) {
-    //   this.positions[j + 0] = Math.sin(i) * this.zone.x - this.zone.x * 0.5
-    //   this.positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
-    //   this.positions[j + 2] = Math.random() * this.zone.z - this.zone.z * 0.5
-    //   this.alpha[j] = 1
-    // }
+
+
+    this.textWinnerBufferGeometry = new BufferGeometry().fromGeometry( settings.textWinnerGeometry );
+    this.textPosition = this.textWinnerBufferGeometry.attributes.position.array
+    for(let i = 0, j = 0; i < this.particlesCount; i++, j += 3) {
+      this.positions[j + 0] = Math.sin(i) * this.zone.x - this.zone.x * 0.5
+      this.positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
+      this.positions[j + 2] = Math.random() * this.zone.z - this.zone.z * 0.5
+      this.alpha[j] = 1
+    }
 
     this.geom = new BufferGeometry()
     this.geom.addAttribute('position', new BufferAttribute(this.positions, 3))
@@ -63,55 +54,84 @@ console.log(this.geometryRing)
     this.particles = new Points(this.geom, this.mat)
     this.add(this.particles)
   }
-  sparks(){
+
+  timelineInit(){
+    this.timelineExplode = new TimelineMax({ paused: true})
+    this.timelineExplode.fromTo(this.velocity, settings.explode.time, {y: 0.5}, { y: 7.0, ease: Power3.easeInOut },0)
+
+    //
+    // this.timelineText = new TimelineMax({ paused: true})
+    // this.timelineText.to(this.currentPosition, 1, this.textWinnerBufferGeometry,0)
+
+  }
+
+
+
+  update(state) {
+    // if(this.explodeStart){
+    //   this.explode()
+    // }else{
+    //   this.sparks()
+    // }
+    //
+    if(this.explodeStart){
+      // this.timelineText.play()
+
+      if(state.audio.percent > settings.explode.limit){
+        this.timelineExplode.play()
+      }else{
+        this.timelineExplode.reverse()
+
+      }
+    }else{
+      this.timelineExplode.reverse()
+
+    }
+
+
     let positions = this.particles.geometry.attributes.position.array
+    // let positionsText = settings.textWinnerGeometry._bufferGeometry.attributes.position.array
     let alpha = this.particles.geometry.attributes.alpha.array
     for(let i = 0, j = 0; i < this.particlesCount; i++, j += 3) {
       // positions[j + 0] -= this.velocity.x
-      positions[j + 0] -= Math.sin(i) * 0.5
-      positions[j + 1]  += 0.5
+      // positions[j + 0] += Math.sin(i) * 0.7
+
+
+if(!settings.explode.complete){
+  if(!this.explodeStart){
+        positions[j + 0] += Math.sin(i) * 0.7
+        positions[j + 1] += this.velocity.y
+  }
+
+  if(positions[j + 1] > -(this.zone.y*0.1)) {
+    if(this.explodeStart){
+      alpha[i] += 0.1
+    }else{
 
       alpha[i] -= 0.1
+    }
+  }
+}
 
-      if(positions[j + 1] > (this.zone.y*0.5)) {
+
+
+
+
+      if(this.explodeStart){
+        positions[j + 0] += (this.textPosition[j + 0] - positions[j + 0]) * 0.01
+        positions[j + 1] += (this.textPosition[j + 1] - positions[j + 1]) * 0.01
+        positions[j + 2] += (this.textPosition[j + 2] - positions[j + 2]) * 0.01
+      }
+
+
+      if(positions[j + 1] > (this.zone.y*this.utils.getRandomArbitrary(0.5,1))) {
         positions[j + 0] = Math.random() * this.zone.x - this.zone.x * 0.5
         positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
+        positions[j + 2] = Math.random() * this.zone.z - this.zone.z * 0.5
+
         alpha[i] = 1
+
       }
-    }
-  }
-  explode(){
-    let positions = this.particles.geometry.attributes.position.array
-    let alpha = this.particles.geometry.attributes.alpha.array
-    for(let i = 0, j = 0; i < this.particlesCount; i++, j += 3) {
-      // positions[j + 0] -= this.velocity.x
-      positions[j + 0] += Math.sin(i) * 0.7
-
-      alpha[i] += 0.05
-
-      if(positions[j + 1] > (this.zone.y*0.5)) {
-        positions[j + 0] = Math.random() * this.zone.x - this.zone.x * 0.5
-        positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
-      }
-    }
-  }
-
-  update() {
-
-    let positions = this.particles.geometry.attributes.position.array
-    let alpha = this.particles.geometry.attributes.alpha.array
-    for(let i = 0, j = 0, f=0; i < this.particlesCount; i++, j += 3, f+=100) {
-      // // positions[j + 0] -= this.velocity.x
-      // positions[j + 0] -= Math.sin(i) * 0.5
-      // positions[j + 1]  += 0.5
-      alpha[i] = 1
-      alpha[j] = 0
-
-      // if(positions[j + 1] > (this.zone.y*0.5)) {
-      //   positions[j + 0] = Math.random() * this.zone.x - this.zone.x * 0.5
-      //   positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
-      //   alpha[i] = 1
-      // }
     }
     this.particles.geometry.attributes.alpha.needsUpdate = true
     this.particles.geometry.attributes.position.needsUpdate = true

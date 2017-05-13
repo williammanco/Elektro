@@ -39,7 +39,7 @@ export default {
   module: {
     rules: [
       { test: /\.(js|jsx)$/, use: 'babel-loader', exclude: /node_modules/ },
-      { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }, // inline base64 URLs for <=8k images, direct URLs for the rest
+      { test: /\.(png|jpg|json)$/, loader: 'url-loader?limit=8192' }, // inline base64 URLs for <=8k images, direct URLs for the rest
       { test: /(\.glsl|\.frag|\.vert)$/, loader: 'raw-loader'   },
       { test: /(\.glsl|\.frag|\.vert)$/, loader: 'glslify' },
       { test: /\.scss$/, loader: 'style-loader!css-loader!scss-loader' }, // use ! to chain loaders

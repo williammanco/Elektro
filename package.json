@@ -22,11 +22,11 @@
     "prepush-": "yarn test"
   },
   "dependencies": {
+    "decibel-meter": "^2.0.0",
     "gsap": "^1.19.1",
     "improved-noise": "^0.0.3",
     "jquery": "^3.2.1",
-    "three": "0.84",
-    "web-audio-analyser": "^2.0.1"
+    "three": "0.84"
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",

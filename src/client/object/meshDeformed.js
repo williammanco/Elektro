@@ -14,6 +14,7 @@ export default class meshDeformed extends Object3D{
 
     this.options = {
       size : [60, 60, 60, 60, 60, 60],
+      deformFactor : 10,
       fragment : shaderFrag,
       vertex : shaderVert,
       uniforms : {
@@ -57,6 +58,7 @@ export default class meshDeformed extends Object3D{
       delta :1.5
     }
     this.add(this.mesh)
+    this.deformInit()
   }
   setTrack(){
     let self = this
@@ -94,38 +96,68 @@ export default class meshDeformed extends Object3D{
          let n = v.clone()
          n.normalize()
          v.copy( n )
-         v.multiplyScalar( 30 )
-         let f = 0.07
-         this.timer != undefined ? f = 0.0+(Math.cos(this.timer)*0.1) : false
+         v.multiplyScalar( 40 )
+         let f = 0
+         delta != undefined ? f = delta : 0
          //var d = - 10 * this.turbulence( f * v.x, f * v.y, f * v.z )
-         let d = 6 * this.improvedNoise.noise( f * v.x, f * v.y, f * v.z )
+         let d = this.options.deformFactor * this.improvedNoise.noise( f * v.x, f * v.y, f * v.z )
          v.add( n.multiplyScalar( d ) )
      }
      return this.geometry
   }
 
-  explodeInit(){
-    this.timelineExplode = new TimelineMax({ paused: true})
+  deformInit(){
+    this.timelineDeform = new TimelineMax({ repeat: -1, yoyo: true})
+    this.timelineDeform
+    .fromTo(this.deform, 2, {delta: 1.1}, { delta: 1.3, ease: Linear.easeNone},0)
+  }
+
+
+
+  timelineInit(){
+    this.timelineExplode = new TimelineMax({ paused: true, onComplete : function(){
+      settings.explode.complete = true
+    }})
     this.timelineExplode
-    .to(this.mesh.rotation, 10, { x : 5, y : 5, ease: Power4.easeInOut},0)
-    .to(this.mesh.scale, 10, { x : 6, y : 6, z :6, ease: Power4.easeInOut},0)
-    .to(this.deform, 10, { delta: .5, ease: Power4.easeInOut},0)
+    .to(this.mesh.rotation, 5, { x : 5, y : 5, ease: Power4.easeInOut},0)
+    .to(this.mesh.scale, settings.explode.time, { x : 12, y : 12, z :12, ease: Power3.easeInOut},0)
+    // .to(this.deform, 10, { delta: .5, ease: Power4.easeInOut},0)
   }
 
   explodePlay(){
-    this.timelineExplode.play()
+    // this.timelineExplode.play()
   }
 
   explodeReturn(){
     this.timelineExplode.reverse().timeScale(1.5)
   }
 
-  update(delta) {
+  update(state, delta) {
     this.mesh.rotation.x = delta*.5
     this.mesh.rotation.y = delta*.2
-
     //this.mesh.rotation.y = Math.sin(delta*2)
-    this.mesh.geometry = this.getDeformedGeometry(this.deform.delta + this.utils.getLoopInterval(delta,1,1.5))
+
+    // TweenMax.to(this.deform,2,{ delta: (state.audio.percent ) })
+
+    if(this.explodeStart){
+      if(state.audio.percent > settings.explode.limit){
+        TweenMax.to(this.deform,1,{ delta: settings.explode.limit })
+        this.timelineExplode.play()
+      }else{
+        if(!settings.explode.complete){
+          TweenMax.to(this.deform,1,{ delta: (state.audio.percent   ) })
+          this.timelineExplode.reverse()
+        }
+
+      }
+
+    }else{
+      TweenMax.to(this.deform,2,{ delta: 0 })
+    }
+    // console.log('delta',this.deform.delta)
+
+    this.mesh.geometry = this.getDeformedGeometry(this.deform.delta*.5)
+
     // this.mesh.rotation.x = delta
     // this.mesh.rotation.y = Math.sin(delta*2)
     // this.mesh.geometry = this.getDeformedGeometry(this.utils.getLoopInterval(delta,1,1.5))
