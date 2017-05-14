@@ -26,8 +26,8 @@ export default class ParticleSystem extends Object3D{
     this.alpha = new Float32Array( this.particlesCount * 1 )
 
 
-    this.textWinnerBufferGeometry = new BufferGeometry().fromGeometry( settings.textWinnerGeometry );
-    this.textPosition = this.textWinnerBufferGeometry.attributes.position.array
+    this.textCustomBufferGeometry = new BufferGeometry().fromGeometry( settings.textCustomGeometry );
+    this.textPosition = this.textCustomBufferGeometry.attributes.position.array
     for(let i = 0, j = 0; i < this.particlesCount; i++, j += 3) {
       this.positions[j + 0] = Math.sin(i) * this.zone.x - this.zone.x * 0.5
       this.positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
@@ -57,11 +57,11 @@ export default class ParticleSystem extends Object3D{
 
   timelineInit(){
     this.timelineExplode = new TimelineMax({ paused: true})
-    this.timelineExplode.fromTo(this.velocity, settings.explode.time, {y: 0.5}, { y: 7.0, ease: Power3.easeInOut },0)
+    this.timelineExplode.fromTo(this.velocity, 2, {y: 0.5}, { y: 7.0, ease: Power3.easeInOut },0)
 
     //
     // this.timelineText = new TimelineMax({ paused: true})
-    // this.timelineText.to(this.currentPosition, 1, this.textWinnerBufferGeometry,0)
+    // this.timelineText.to(this.currentPosition, 1, this.textCustomBufferGeometry,0)
 
   }
 
@@ -76,11 +76,11 @@ export default class ParticleSystem extends Object3D{
     //
     if(this.explodeStart){
       // this.timelineText.play()
+      this.timelineExplode.play()
 
       if(state.audio.percent > settings.explode.limit){
-        this.timelineExplode.play()
       }else{
-        this.timelineExplode.reverse()
+        // this.timelineExplode.reverse()
 
       }
     }else{
@@ -90,7 +90,7 @@ export default class ParticleSystem extends Object3D{
 
 
     let positions = this.particles.geometry.attributes.position.array
-    // let positionsText = settings.textWinnerGeometry._bufferGeometry.attributes.position.array
+    // let positionsText = settings.textCustomGeometry._bufferGeometry.attributes.position.array
     let alpha = this.particles.geometry.attributes.alpha.array
     for(let i = 0, j = 0; i < this.particlesCount; i++, j += 3) {
       // positions[j + 0] -= this.velocity.x
@@ -98,14 +98,12 @@ export default class ParticleSystem extends Object3D{
 
 
 if(!settings.explode.complete){
-  if(!this.explodeStart){
-        positions[j + 0] += Math.sin(i) * 0.7
-        positions[j + 1] += this.velocity.y
-  }
+  positions[j + 0] += Math.sin(i) * 0.7
+  positions[j + 1] += this.velocity.y
 
   if(positions[j + 1] > -(this.zone.y*0.1)) {
     if(this.explodeStart){
-      alpha[i] += 0.1
+      alpha[j] += 0.1
     }else{
 
       alpha[i] -= 0.1
@@ -117,10 +115,17 @@ if(!settings.explode.complete){
 
 
 
-      if(this.explodeStart){
-        positions[j + 0] += (this.textPosition[j + 0] - positions[j + 0]) * 0.01
-        positions[j + 1] += (this.textPosition[j + 1] - positions[j + 1]) * 0.01
-        positions[j + 2] += (this.textPosition[j + 2] - positions[j + 2]) * 0.01
+      if(settings.explode.complete){
+        if(j > 4000){
+          positions[j + 0] += (this.textPosition[j + 0] - positions[j + 0]) * 0.05
+          positions[j + 1] += (this.textPosition[j + 1] - positions[j + 1]) * 0.05
+          positions[j + 2] += (this.textPosition[j + 2] - positions[j + 2]) * 0.05
+        }else{
+          positions[j + 0] += Math.sin(i) * 0.7
+          positions[j + 1] += this.velocity.y
+        }
+        alpha[i] += 0.1
+
       }
 
 

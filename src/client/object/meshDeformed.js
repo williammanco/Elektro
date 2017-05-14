@@ -7,7 +7,7 @@ import { TimelineMax } from 'gsap'
 const shaderVert = require('../assets/shader/matcapSEM.vert')
 const shaderFrag = require('../assets/shader/matcapSEM_blend.frag')
 
-export default class meshDeformed extends Object3D{
+export default class MeshDeformed extends Object3D{
   constructor() {
     super()
     const self = this
@@ -55,10 +55,10 @@ export default class meshDeformed extends Object3D{
     this.mesh.geometry = this.getDeformedGeometry()
     this.mesh.scale.set(2,2,2)
     this.deform = {
-      delta :1.5
+      delta : 0
     }
     this.add(this.mesh)
-    this.deformInit()
+    // this.deformInit()
   }
   setTrack(){
     let self = this
@@ -119,8 +119,10 @@ export default class meshDeformed extends Object3D{
       settings.explode.complete = true
     }})
     this.timelineExplode
-    .to(this.mesh.rotation, 5, { x : 5, y : 5, ease: Power4.easeInOut},0)
-    .to(this.mesh.scale, settings.explode.time, { x : 12, y : 12, z :12, ease: Power3.easeInOut},0)
+    // .to(this.mesh.rotation, 5, { x : 5, y : 5, ease: Power4.easeInOut},0)
+    .to(this.mesh.scale, settings.explode.time, { x : 3, y : 3, z :3, ease: Power3.easeIn},0)
+    .to(this.mesh.material,1,{opacity: 0},settings.explode.time-1)
+
     // .to(this.deform, 10, { delta: .5, ease: Power4.easeInOut},0)
   }
 
@@ -155,8 +157,15 @@ export default class meshDeformed extends Object3D{
       TweenMax.to(this.deform,2,{ delta: 0 })
     }
     // console.log('delta',this.deform.delta)
+    if(settings.explode.complete){
+      this.material.uniforms.lightDir_value.value[0] += 0 - this.material.uniforms.lightDir_value.value[0] * 0.1
+      this.material.uniforms.lightDir_value.value[1] += 0 - this.material.uniforms.lightDir_value.value[1] * 0.1
+      this.material.uniforms.lightDir_value.value[2] += 1 - this.material.uniforms.lightDir_value.value[2] * 0.1
 
-    this.mesh.geometry = this.getDeformedGeometry(this.deform.delta*.5)
+
+    }
+
+  this.mesh.geometry = this.getDeformedGeometry(this.deform.delta*.5)
 
     // this.mesh.rotation.x = delta
     // this.mesh.rotation.y = Math.sin(delta*2)

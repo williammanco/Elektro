@@ -6,9 +6,9 @@ import 'babel-polyfill'
 import { Scene, FontLoader, WebGLRenderer, Clock, Vector3, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh, MeshLambertMaterial } from 'three/src/Three'
 import TweenMax from 'gsap'
 import settings from './settings.js'
-import ParticleSystem from './object/particleSystem'
+import ParticleSystem from './object/ParticleSystem'
 import MeshDeformed from './object/meshDeformed'
-import TextWinner from './object/textWinner'
+import TextCustom from './object/TextCustom'
 
 export default class Canvas {
   constructor( width, height ) {
@@ -62,10 +62,17 @@ export default class Canvas {
     this.meshDeformed = new MeshDeformed()
     this.scene.add(this.meshDeformed)
 
-    this.textWinner = new TextWinner()
-    // this.textWinner.setMesh()
-    settings.textWinnerGeometry = this.textWinner.geometry
-    this.scene.add(this.textWinner)
+    this.textCustom = new TextCustom('DDD',30)
+    this.textCustom.setToCenter()
+    settings.textCustomGeometry = this.textCustom.geometry
+    this.scene.add(this.textCustom)
+
+    this.textDB = new TextCustom('0db',30)
+    this.textDB.setMesh()
+    this.textDB.setRotation()
+    this.textDB.setToCenter()
+    settings.textDBGeometry = this.textDB.geometry
+    this.scene.add(this.textDB)
 
     this.particleSystem = new ParticleSystem()
     this.scene.add(this.particleSystem)
