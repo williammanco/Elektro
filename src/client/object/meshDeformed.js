@@ -14,7 +14,7 @@ export default class MeshDeformed extends Object3D{
 
     this.options = {
       size : [60, 60, 60, 60, 60, 60],
-      deformFactor : 10,
+      deformFactor : 15,
       fragment : shaderFrag,
       vertex : shaderVert,
       uniforms : {
@@ -106,11 +106,6 @@ export default class MeshDeformed extends Object3D{
      return this.geometry
   }
 
-  deformInit(){
-    this.timelineDeform = new TimelineMax({ repeat: -1, yoyo: true})
-    this.timelineDeform
-    .fromTo(this.deform, 2, {delta: 1.1}, { delta: 1.3, ease: Linear.easeNone},0)
-  }
 
 
 
@@ -121,7 +116,7 @@ export default class MeshDeformed extends Object3D{
     this.timelineExplode
     // .to(this.mesh.rotation, 5, { x : 5, y : 5, ease: Power4.easeInOut},0)
     .to(this.mesh.scale, settings.explode.time, { x : 3, y : 3, z :3, ease: Power3.easeIn},0)
-    .to(this.mesh.material,1,{opacity: 0},settings.explode.time-1)
+    // .to(this.mesh.material,1,{opacity: 0},settings.explode.time-1)
 
     // .to(this.deform, 10, { delta: .5, ease: Power4.easeInOut},0)
   }
@@ -138,17 +133,23 @@ export default class MeshDeformed extends Object3D{
     this.mesh.rotation.x = delta*.5
     this.mesh.rotation.y = delta*.2
     //this.mesh.rotation.y = Math.sin(delta*2)
+    // TweenMax.to(this.deform,2,{ delta: (settings.audio.delta ) })
+    //
+    // console.log(settings.mouse.x)
+    // TweenMax.to(this.material.uniforms.lightDir_value,.3,{ value: [0.1,-0.3,0.6] })
 
-    // TweenMax.to(this.deform,2,{ delta: (state.audio.percent ) })
 
-    if(this.explodeStart){
-      if(state.audio.percent > settings.explode.limit){
-        TweenMax.to(this.deform,1,{ delta: settings.explode.limit })
-        this.timelineExplode.play()
+    if(settings.explodeStart){
+      if(settings.pressing > settings.explode.limit && !settings.levelUpper){
+        TweenMax.to(this.deform,.3,{ delta: settings.explode.limit })
+        // this.timelineExplode.play()
+
       }else{
         if(!settings.explode.complete){
-          TweenMax.to(this.deform,1,{ delta: (state.audio.percent   ) })
+          // this.deform.delta = settings.audio.deltaTween
+          TweenMax.to(this.deform,.8,{ delta: settings.pressing })
           this.timelineExplode.reverse()
+
         }
 
       }

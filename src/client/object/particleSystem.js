@@ -10,29 +10,28 @@ export default class ParticleSystem extends Object3D{
     super()
 
     this.utils = new Utils()
-    this.explodeStart = false
+    settings.explodeStart = false
     this.velocity = {
       x: 0.0,
-      y: 0.5
+      y: 0.1
     }
     this.zone = {
       x: settings.world.width/2,
       y: settings.world.height/2,
       z: settings.world.depth/2
     }
+    this.particlesCountText = 0
 
-    this.particlesCount = 30000
+    this.particlesCount = 40000
     this.positions = new Float32Array(this.particlesCount * 3)
     this.alpha = new Float32Array( this.particlesCount * 1 )
 
 
-    this.textCustomBufferGeometry = new BufferGeometry().fromGeometry( settings.textCustomGeometry );
-    this.textPosition = this.textCustomBufferGeometry.attributes.position.array
     for(let i = 0, j = 0; i < this.particlesCount; i++, j += 3) {
       this.positions[j + 0] = Math.sin(i) * this.zone.x - this.zone.x * 0.5
       this.positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
       this.positions[j + 2] = Math.random() * this.zone.z - this.zone.z * 0.5
-      this.alpha[j] = 1
+      this.alpha[i] = 1
     }
 
     this.geom = new BufferGeometry()
@@ -57,7 +56,7 @@ export default class ParticleSystem extends Object3D{
 
   timelineInit(){
     this.timelineExplode = new TimelineMax({ paused: true})
-    this.timelineExplode.fromTo(this.velocity, 2, {y: 0.5}, { y: 7.0, ease: Power3.easeInOut },0)
+    // this.timelineExplode.fromTo(this.velocity, 2, {y: 0.5}, { y: 7.0, ease: Power3.easeInOut },0)
 
     //
     // this.timelineText = new TimelineMax({ paused: true})
@@ -68,17 +67,17 @@ export default class ParticleSystem extends Object3D{
 
 
   update(state) {
-    // if(this.explodeStart){
+    // if(settings.explodeStart){
     //   this.explode()
     // }else{
     //   this.sparks()
     // }
     //
-    if(this.explodeStart){
+    if(settings.explodeStart){
       // this.timelineText.play()
       this.timelineExplode.play()
 
-      if(state.audio.percent > settings.explode.limit){
+      if(settings.audio.deltaTween > settings.explode.limit){
       }else{
         // this.timelineExplode.reverse()
 
@@ -97,25 +96,62 @@ export default class ParticleSystem extends Object3D{
       // positions[j + 0] += Math.sin(i) * 0.7
 
 
-if(!settings.explode.complete){
-  positions[j + 0] += Math.sin(i) * 0.7
-  positions[j + 1] += this.velocity.y
+      if(!settings.explode.complete){
+        if(settings.explodeStart){
 
-  if(positions[j + 1] > -(this.zone.y*0.1)) {
-    if(this.explodeStart){
-      alpha[j] += 0.1
-    }else{
+          if(positions[j + 0] > -100 && positions[j + 0] < 100){
+            if(j < 10000 && settings.textDBPosition){
+              positions[j + 0] += (settings.textDBPosition[j + 0] - positions[j + 0]) * 0.2
+              positions[j + 1] += (settings.textDBPosition[j + 1] - positions[j + 1]) * 0.2
+              positions[j + 2] += (settings.textDBPosition[j + 2] - positions[j + 2]) * 0.2
+            }else{
+              positions[j + 0] += Math.sin(i) * 0.7
+              positions[j + 1] += this.velocity.y + (settings.pressing*10)
+            }
+          }else{
+            positions[j + 0] += Math.sin(i) * 0.7
+            positions[j + 1] += this.velocity.y + (settings.pressing*10)
+          }
 
-      alpha[i] -= 0.1
-    }
-  }
-}
+          if(positions[j + 1] > this.zone.y*this.utils.getRandomArbitrary(0.5,0.5) || alpha[i] == 0) {
+            positions[j + 0] = Math.random() * this.zone.x - this.zone.x * 0.5
+            positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
+            positions[j + 2] = Math.random() * this.zone.z - this.zone.z * 0.5
+            alpha[i] = 1
+          }
+          if(settings.pressing > 0.1){
+            alpha[i] += 0.1
+
+          }
+
+        }else{
+          // if(positions[j + 0] > -80 && positions[j + 0] < 80 && alpha[i] > 10){
+          //   alpha[i] -= 0.8
+          // }
+          positions[j + 0] += Math.sin(i) * 0.7
+          positions[j + 1] += this.velocity.y + (settings.pressing)
 
 
 
+          if(positions[j + 1] > -(this.zone.y*0.1)) {
+            if(settings.pressing > 0.1){
+              alpha[j] += 0.1
+            }else{
 
+              alpha[i] -= 0.1
+            }
+          }
 
-      if(settings.explode.complete){
+          if(positions[j + 1] > (this.zone.y*this.utils.getRandomArbitrary(0.5,1))) {
+            positions[j + 0] = Math.random() * this.zone.x - this.zone.x * 0.5
+            positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
+            positions[j + 2] = Math.random() * this.zone.z - this.zone.z * 0.5
+
+            alpha[i] = 1
+
+          }
+        }
+      }else{
         if(j > 4000){
           positions[j + 0] += (this.textPosition[j + 0] - positions[j + 0]) * 0.05
           positions[j + 1] += (this.textPosition[j + 1] - positions[j + 1]) * 0.05
@@ -125,17 +161,6 @@ if(!settings.explode.complete){
           positions[j + 1] += this.velocity.y
         }
         alpha[i] += 0.1
-
-      }
-
-
-      if(positions[j + 1] > (this.zone.y*this.utils.getRandomArbitrary(0.5,1))) {
-        positions[j + 0] = Math.random() * this.zone.x - this.zone.x * 0.5
-        positions[j + 1] = Math.random() * this.zone.y - this.zone.y * 0.5
-        positions[j + 2] = Math.random() * this.zone.z - this.zone.z * 0.5
-
-        alpha[i] = 1
-
       }
     }
     this.particles.geometry.attributes.alpha.needsUpdate = true

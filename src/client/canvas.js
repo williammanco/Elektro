@@ -3,12 +3,13 @@
 /* eslint-disable no-console */
 import 'babel-polyfill'
 
-import { Scene, FontLoader, WebGLRenderer, Clock, Vector3, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh, MeshLambertMaterial } from 'three/src/Three'
+import { Scene, FontLoader, BufferGeometry, WebGLRenderer, Clock, Vector3, PerspectiveCamera, AmbientLight, SpotLight, JSONLoader, TextureLoader, LoadingManager, BoxHelper, Mesh, MeshLambertMaterial } from 'three/src/Three'
 import TweenMax from 'gsap'
 import settings from './settings.js'
 import ParticleSystem from './object/ParticleSystem'
 import MeshDeformed from './object/meshDeformed'
 import TextCustom from './object/TextCustom'
+import Emitter from 'event-emitter-es6'
 
 export default class Canvas {
   constructor( width, height ) {
@@ -26,6 +27,10 @@ export default class Canvas {
     this.scene = new Scene()
     this.time = 0
     document.body.appendChild( this.renderer.domElement )
+
+
+    ;(function(){Math.clamp=function(a,b,c){return Math.max(b,Math.min(c,a));}})()
+
 
   }
   loader(){
@@ -62,18 +67,6 @@ export default class Canvas {
     this.meshDeformed = new MeshDeformed()
     this.scene.add(this.meshDeformed)
 
-    this.textCustom = new TextCustom('DDD',30)
-    this.textCustom.setToCenter()
-    settings.textCustomGeometry = this.textCustom.geometry
-    this.scene.add(this.textCustom)
-
-    this.textDB = new TextCustom('0db',30)
-    this.textDB.setMesh()
-    this.textDB.setRotation()
-    this.textDB.setToCenter()
-    settings.textDBGeometry = this.textDB.geometry
-    this.scene.add(this.textDB)
-
     this.particleSystem = new ParticleSystem()
     this.scene.add(this.particleSystem)
 
@@ -83,27 +76,54 @@ export default class Canvas {
     this.meshDeformed.timelineInit()
     this.timelineCamera()
     this.events()
-
+    this.setText()
   }
 
   events(){
-    document.addEventListener('keydown', (event) => {
-      const keyName = event.key;
-      if(event.code == 'Space'){
-        this.meshDeformed.explodePlay()
-        this.timelineCamera.play()
-        this.particleSystem.explodeStart = this.meshDeformed.explodeStart = true
-      }
-    }, false);
-    document.addEventListener('keyup', (event) => {
-      const keyName = event.key;
-      if(event.code == 'Space'){
-        this.meshDeformed.explodeReturn()
-        this.timelineCamera.reverse()
-        this.particleSystem.explodeStart = this.meshDeformed.explodeStart = false
+    const self = this
 
+    // document.addEventListener('keydown', (event) => {
+    //   const keyName = event.key;
+    //
+    // }, false);
+    // document.addEventListener('keyup', (event) => {
+    //   const keyName = event.key;
+    //   if(event.code == 'Space'){
+    //     if(settings.pressingSource < 1.5){
+    //       settings.pressingSource += .01
+    //       // TweenMax.to(settings,.1,{ pressing : '+=.01'})
+    //     }
+    //   }
+    // }, false);
+
+    let cameraPanRange = 1.0, cameraYawRange = cameraPanRange * 1.125;
+
+    window.addEventListener('mouseup', (e) => {
+      if(settings.pressingSource < 1.5){
+        settings.pressingSource += .01
+        // TweenMax.to(settings,.1,{ pressing : '+=.01'})
       }
-    }, false);
+    })
+
+    window.addEventListener('mousemove', (e) => {
+        const nx = e.clientX / window.innerWidth * 2 - 1;
+        const ny = -e.clientY / window.innerHeight * 2 + 1;
+        const ry = -THREE.Math.mapLinear(nx, -1, 1, cameraPanRange * -0.5, cameraPanRange * 0.5);
+        const rx = THREE.Math.mapLinear(ny, -1, 1, cameraYawRange * -0.5, cameraYawRange * 0.5);
+
+        TweenMax.to(this.camera.rotation, 2, {
+          x: rx,
+          y: ry,
+          ease: Power4.easeOut,
+        });
+      });
+
+    settings.emitter.on('app.levelUpper', function(){
+      self.setText()
+      self.setTimelineLevelUpper()
+    })
+
+
   }
 
   resize(width, height) {
@@ -124,16 +144,78 @@ export default class Canvas {
     this.timelineCamera = new TimelineMax({ paused: true})
     this.timelineCamera
     .to(this.camera.position, settings.explode.time, { z: 400, ease: Power4.easeInOut},0)
-
+    this.camera.up = new Vector3(0,0,1);
+    this.camera.lookAt(new Vector3(0,0,0));
     this.camera.needsUpdate = true
+
+  }
+
+  setTimelineLevelUpper(){
+    const self = this
+
+    this.timelineLevelUpper = new TimelineMax()
+    this.timelineLevelUpper
+    // .to(this.textLevelUpper.mesh.scale, 2, {x:1,y:1,z:1 },0)
+    .fromTo(this.textLevelUpper.material, .2, {opacity: 0},{opacity: 1},0)
+    // .to(this.textLevelUpper.material, .3, {opacity: 0})
+
+  }
+
+  setText(){
+    if(this.textLevelUpper){
+      this.scene.remove(this.textLevelUpper)
+    }
+    this.textLevelUpper = new TextCustom(settings.level,50)
+    this.textLevelUpper.setMesh()
+    this.textLevelUpper.setRotation()
+    this.textLevelUpper.setToCenter()
+    this.textLevelUpper.material.transparent = true
+    this.textLevelUpper.material.opacity = 0
+    this.scene.add(this.textLevelUpper)
+    this.timelineLevelUpper = null
   }
 
   update(state) {
+    TweenMax.to(settings,2,{ pressing: Math.clamp(settings.pressingSource,0,1.5)})
+
+    if(!settings.levelUpper){
+      if(settings.pressing > 0.001){
+        settings.explodeStart = true
+        this.timelineCamera.progress(settings.pressing*5)
+        // TweenMax.to(settings,1,{pressing : '-=0.0001'})
+        settings.pressingSource -= settings.force
+      }else{
+        settings.pressingSource = 0
+         settings.explodeStart = false
+      }
+    }else{
+      settings.explodeStart = false
+
+      if(settings.pressing < 0.001){
+        settings.levelUpper = false
+        settings.pressingSource = 0
+      }else{
+        settings.pressingSource -= .01
+        this.timelineCamera.progress(settings.pressing*5)
+      }
+    }
+
+    if(settings.pressing > settings.explode.limit && !settings.levelUpper){
+      settings.level++
+      settings.force += .0001
+      settings.levelUpper = true
+      settings.emitter.emit('app.levelUpper')
+
+    }
+
+
     if (!this.isReady) { return }
     let delta = this.clock.getDelta()
     this.time += 1/60
     this.particleSystem.update(state)
     this.meshDeformed.update(state, this.time)
+
+
 
   }
   render() {
