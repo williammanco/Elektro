@@ -3,7 +3,7 @@ import settings from '../settings.js'
 import Utils from '../utils.js'
 const vert = require('../assets/shader/snow.vert')
 const frag = require('../assets/shader/snow.frag')
-// const particleImage = require('../textures/particle2.png')
+const particleImage = require('../textures/particle2.png')
 
 export default class ParticleSystem extends Object3D{
   constructor(state) {
@@ -43,7 +43,7 @@ export default class ParticleSystem extends Object3D{
       vertexShader: vert,
       fragmentShader: frag,
       uniforms: {
-        'texture': { type: 't', value: new TextureLoader().load( 'textures/particle2.png') },
+        'texture': { type: 't', value: new TextureLoader().load(particleImage) },
         'color': { type: 'c', value: new Color(0xd200ff) }
       },
       transparent: true,

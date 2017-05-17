@@ -23,7 +23,8 @@ export default {
     delta : 0,
     percentTween : 0,
     deltaTween : 0,
-    dbTween : 0
+    dbTween : 0,
+    source : null
   },
   textures:{
     normal : imageNormal,

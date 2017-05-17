@@ -5,6 +5,7 @@ import 'babel-polyfill'
 import settings from './settings.js'
 import Canvas from './canvas'
 import Utils from './utils'
+import Audio from './audio'
 import DecibelMeter from 'decibel-meter'
 import APP_CONTAINER_SELECTOR from '../shared/config'
 import Emitter from 'event-emitter-es6'
@@ -19,8 +20,11 @@ export default class Elektro {
     this.state = {
       audio : {}
     }
+    settings.emitter = new Emitter()
+
     this.mouse = {}
     const self = this
+    this.audio = new Audio()
     this.canvas = new Canvas(window.innerWidth,window.innerHeight)
     this.onLoaderComplete()
     meter.sources.then(sources => {
@@ -34,7 +38,6 @@ export default class Elektro {
       TweenMax.to(settings.audio, 1, { percentTween : percent, deltaTween : value , dbTween : dB  })
     })
 
-    settings.emitter = new Emitter()
 
     this.events()
     this.setInfoText()
@@ -86,6 +89,7 @@ export default class Elektro {
   }
 
   update() {
+    this.audio.update()
     this.canvas.update(this.state)
     this.canvas.render()
     requestAnimationFrame( this.update.bind(this) )
