@@ -6,15 +6,16 @@ import { WDS_PORT } from './src/shared/config'
 import { isProd } from './src/shared/util'
 import DashboardPlugin from 'webpack-dashboard/plugin'
 import UglifyJSPlugin from 'uglifyjs-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 
+const html = new HtmlWebpackPlugin({
+  template: __dirname + '/src/client/index.html'
+})
 const uglify = new UglifyJSPlugin({
   compress: {
     warnings: false
   }
 })
-
-console.log(uglify)
-
 
 export default {
   entry: [
@@ -23,7 +24,7 @@ export default {
   output: {
     filename: 'js/bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: isProd ? '/static/' : `http://localhost:${WDS_PORT}/dist/`,
+    publicPath: isProd ? '/static/' : `./dist/`,
   },
   plugins: [
     new DashboardPlugin(),
@@ -33,17 +34,29 @@ export default {
     THREE: "three",
     "window.THREE": "three",
     "window.$": "jquery",
-    "window.jQuery": "jquery"
+    "window.jQuery": "jquery",
+    html,
+    uglify
     })
   ],
   module: {
     rules: [
       { test: /\.(js|jsx)$/, use: 'babel-loader', exclude: /node_modules/ },
-      { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }, // inline base64 URLs for <=8k images, direct URLs for the rest
+      { test: /\.(png|jpg|json|mp3)$/, loader: 'url-loader?limit=8192' }, // inline base64 URLs for <=8k images, direct URLs for the rest
       { test: /(\.glsl|\.frag|\.vert)$/, loader: 'raw-loader'   },
       { test: /(\.glsl|\.frag|\.vert)$/, loader: 'glslify' },
-      { test: /\.scss$/, loader: 'style-loader!css-loader!scss-loader' }, // use ! to chain loaders
+      { test: /\.sass$/, loader: 'style-loader!css-loader!sass-loader' }, // use ! to chain loaders
       { test: /\.css$/, loader: 'style-loader!css-loader'},
+      { test: /\.html$/, use:[{
+          loader: 'html-loader',
+          options: {
+            minimize: true,
+            removeComments: false,
+            collapseWhitespace: false
+          }
+
+        }
+      ]}
     ]
   },
   devtool: isProd ? false : 'source-map',
