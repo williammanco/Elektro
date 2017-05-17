@@ -27,16 +27,16 @@ export default class Elektro {
     this.audio = new Audio()
     this.canvas = new Canvas(window.innerWidth,window.innerHeight)
     this.onLoaderComplete()
-    meter.sources.then(sources => {
-        meter.connect(sources[0])
-    })
-    meter.listen()
-    meter.on('sample', (dB, percent, value) => {
-      settings.audio.db = dB
-      settings.audio.delta = value
-      settings.audio.percent = percent
-      TweenMax.to(settings.audio, 1, { percentTween : percent, deltaTween : value , dbTween : dB  })
-    })
+    // meter.sources.then(sources => {
+    //     meter.connect(sources[0])
+    // })
+    // meter.listen()
+    // meter.on('sample', (dB, percent, value) => {
+    //   settings.audio.db = dB
+    //   settings.audio.delta = value
+    //   settings.audio.percent = percent
+    //   TweenMax.to(settings.audio, 1, { percentTween : percent, deltaTween : value , dbTween : dB  })
+    // })
 
 
     this.events()
@@ -89,7 +89,6 @@ export default class Elektro {
   }
 
   update() {
-    this.audio.update()
     this.canvas.update(this.state)
     this.canvas.render()
     requestAnimationFrame( this.update.bind(this) )
