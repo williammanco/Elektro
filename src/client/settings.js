@@ -10,7 +10,7 @@ export default {
   runSpeed: 2,
   pressing: 0,
   pressingSource : 0,
-  force : .001,
+  force : .004,
   level: 0,
   levelUpper : false,
   mouse : {

@@ -16,7 +16,6 @@ const uglify = new UglifyJSPlugin({
     warnings: false
   }
 })
-
 export default {
   entry: [
     './src/client',
@@ -24,7 +23,7 @@ export default {
   output: {
     filename: 'js/bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: isProd ? '/static/' : `./dist/`,
+    publicPath: isProd ? './dist/' : `./dist/`,
   },
   plugins: [
     new DashboardPlugin(),

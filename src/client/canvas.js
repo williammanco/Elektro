@@ -9,7 +9,6 @@ import settings from './settings.js'
 import ParticleSystem from './object/ParticleSystem'
 import MeshDeformed from './object/meshDeformed'
 import TextCustom from './object/TextCustom'
-import Emitter from 'event-emitter-es6'
 
 export default class Canvas {
   constructor( width, height ) {
@@ -98,14 +97,14 @@ export default class Canvas {
 
     let cameraPanRange = 1.0, cameraYawRange = cameraPanRange * 1.125;
 
-    window.addEventListener('mouseup', (e) => {
+    $(window).on('mouseup touchstart', (e) => {
       if(settings.pressingSource < 1.5){
-        settings.pressingSource += .01
+        settings.pressingSource += .03
         // TweenMax.to(settings,.1,{ pressing : '+=.01'})
       }
     })
 
-    window.addEventListener('mousemove', (e) => {
+    $(window).on('mousemove touchmove', (e) => {
         const nx = e.clientX / window.innerWidth * 2 - 1;
         const ny = -e.clientY / window.innerHeight * 2 + 1;
         const ry = -THREE.Math.mapLinear(nx, -1, 1, cameraPanRange * -0.5, cameraPanRange * 0.5);
@@ -118,7 +117,7 @@ export default class Canvas {
         });
       });
 
-    settings.emitter.on('app.levelUpper', function(){
+    $(window).on('app.levelUpper', function(){
       self.setText()
       self.setTimelineLevelUpper()
     })
@@ -204,7 +203,7 @@ export default class Canvas {
       settings.level++
       settings.force += .0001
       settings.levelUpper = true
-      settings.emitter.emit('app.levelUpper')
+      $(window).trigger('app.levelUpper')
 
     }
 

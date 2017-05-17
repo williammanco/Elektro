@@ -13,7 +13,7 @@ export default class Utils {
     multiply == undefined ? multiply = 45 : null
     return Math.floor(Math.random()*11)*multiply
   }
-  
+
   getRandomSign(){
     return Math.sign(Math.random() < 0.5 ? -1 : 1)
   }
@@ -34,5 +34,17 @@ export default class Utils {
 
   getLoopInterval( number, min, max ){
     return Math.abs(Math.sin(number)) * (max - min) + min
+  }
+
+  getShuffleArray(array){
+    var currentIndex = array.length, temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+    return array;
   }
 }

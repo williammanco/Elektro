@@ -7,10 +7,10 @@ import Canvas from './canvas'
 import Utils from './utils'
 import DecibelMeter from 'decibel-meter'
 import APP_CONTAINER_SELECTOR from '../shared/config'
-import Emitter from 'event-emitter-es6'
 import sono from 'sono';
 import 'sono/effects';
 import 'sono/utils'
+import 'blast-text'
 
 const base = require('./assets/mp3/sound.mp3')
 const kick = require('./assets/mp3/kick.mp3')
@@ -24,11 +24,11 @@ export default class Elektro {
     this.state = {
       audio : {}
     }
-    settings.emitter = new Emitter()
 
     this.mouse = {}
     const self = this
     this.canvas = new Canvas(window.innerWidth,window.innerHeight)
+    this.utils = new Utils()
     this.onLoaderComplete()
     // meter.sources.then(sources => {
     //     meter.connect(sources[0])
@@ -48,55 +48,68 @@ export default class Elektro {
     	id: 'base',
     	url: [base],
     	loop: true,
-    	volume: 1,
-    	effects: [
-    		sono.reverb()
-    	]
+    	volume: 1.5
     })
     this.kick = sono.create(kick)
     this.base.play()
     this.squareWave.play()
     this.events()
     this.setInfoText()
+    this.removeIntro()
   }
 
   setInfoText(){
 
     this.infoDiv = document.createElement("div")
-    this.infoDiv.setAttribute("id", "info-container")
+    this.infoDiv.setAttribute("id", "html-content")
     this.infoDiv.innerHTML = `
-      <div class="title">Nervous Ball</div>
-      <div class="description">forever clicking ...</div>
-      <div class="level">
-        <div class="current inline">level <span id="current-level"></span></div>
-        <div class="max inline">max <span id="max-level"></span></div>
+      <div id="fastBlack"></div>
+      <div id="info-container">
+        <div class="title">Nervous Ball</div>
+        <div class="description">forever clicking ...</div>
+        <div class="level">
+          <div class="current inline">level <span id="current-level"></span></div>
+        </div>
+      </div>
+      <div id="spot">
+        <div>never</div>
+        <div>ending</div>
+        <div>click</div>
       </div>
     `
-    document.body.appendChild(this.infoDiv)
-    document.getElementById('current-level').innerHTML = settings.level
-    document.getElementById('max-level').innerHTML = ':('
+    $('body').append(this.infoDiv)
+    $('#current-level').html(':(')
     if(window.localStorage.level != undefined) {
       window.localStorage.level = settings.level
     }
+    $('#spot div')
+    .blast({ delimiter: "character" })
+    .css('visibility','visible')
+
+  }
+
+  removeIntro(){
+    let caosLetter = this.utils.getShuffleArray($('#spot .blast'))
+    this.timelineIntro = new TimelineMax()
+    this.timelineIntro
+    .staggerFromTo('#spot .blast', 2, {opacity:0},{ opacity: 1, ease: Power4.easeIn },.02,1)
+    .to('#fastBlack', 4, { opacity: 0,ease: Power4.easeInOut },3)
+    .staggerTo(caosLetter, 2, { opacity: 0, ease: Power4.easeInOut },.05)
 
   }
 
   events(){
     const self = this
 
-    document.addEventListener( 'mousemove', function(event){
+    $(window).on( 'mousemove touchmove', function(event){
       let x = ( event.clientX / window.innerWidth ) * 2 - 1;
       let y = - ( event.clientY / window.innerHeight ) * 2 + 1;
       settings.mouse = { x:x, y:y }
     }, false )
 
-    settings.emitter.on('app.levelUpper', function(){
-      if(window.localStorage.getItem('level') < settings.level) {
-        window.localStorage.setItem('level', settings.level)
-        document.getElementById('max-level').innerHTML = settings.level
-      }
+    $(window).on('app.levelUpper', function(){
       self.kick.play()
-      document.getElementById('current-level').innerHTML = settings.level
+      $('#current-level').html(settings.level)
     })
   }
 
@@ -107,6 +120,7 @@ export default class Elektro {
 
   update() {
     if(this.squareWave){
+      this.squareWave.frequency = 10+settings.pressing*10
       this.squareWave.volume = settings.pressing*0.3
     }
     this.canvas.update(this.state)
