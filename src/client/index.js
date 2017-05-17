@@ -5,11 +5,15 @@ import 'babel-polyfill'
 import settings from './settings.js'
 import Canvas from './canvas'
 import Utils from './utils'
-import Audio from './audio'
 import DecibelMeter from 'decibel-meter'
 import APP_CONTAINER_SELECTOR from '../shared/config'
 import Emitter from 'event-emitter-es6'
+import sono from 'sono';
+import 'sono/effects';
+import 'sono/utils'
 
+const base = require('./assets/mp3/sound.mp3')
+const kick = require('./assets/mp3/kick.mp3')
 const meter = new DecibelMeter('unique-id')
 const imageBase = require('./assets/img/matblender.png')
 const imageNormal = require('./assets/img/fresh_snow-normal.jpg')
@@ -24,7 +28,6 @@ export default class Elektro {
 
     this.mouse = {}
     const self = this
-    this.audio = new Audio()
     this.canvas = new Canvas(window.innerWidth,window.innerHeight)
     this.onLoaderComplete()
     // meter.sources.then(sources => {
@@ -37,8 +40,22 @@ export default class Elektro {
     //   settings.audio.percent = percent
     //   TweenMax.to(settings.audio, 1, { percentTween : percent, deltaTween : value , dbTween : dB  })
     // })
-
-
+    this.squareWave = sono.create('square')
+    this.squareWave.volume = 0
+    this.squareWave.frequency = 10
+    this.squareWave.effects = [ sono.reverb(), sono.echo()]
+    this.base = sono.create({
+    	id: 'base',
+    	url: [base],
+    	loop: true,
+    	volume: 1,
+    	effects: [
+    		sono.reverb()
+    	]
+    })
+    this.kick = sono.create(kick)
+    this.base.play()
+    this.squareWave.play()
     this.events()
     this.setInfoText()
   }
@@ -78,7 +95,7 @@ export default class Elektro {
         window.localStorage.setItem('level', settings.level)
         document.getElementById('max-level').innerHTML = settings.level
       }
-
+      self.kick.play()
       document.getElementById('current-level').innerHTML = settings.level
     })
   }
@@ -89,6 +106,9 @@ export default class Elektro {
   }
 
   update() {
+    if(this.squareWave){
+      this.squareWave.volume = settings.pressing*0.3
+    }
     this.canvas.update(this.state)
     this.canvas.render()
     requestAnimationFrame( this.update.bind(this) )
