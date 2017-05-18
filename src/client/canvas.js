@@ -97,12 +97,7 @@ export default class Canvas {
 
     let cameraPanRange = 1.0, cameraYawRange = cameraPanRange * 1.125;
 
-    $(window).on('mouseup touchstart', (e) => {
-      if(settings.pressingSource < 1.5){
-        settings.pressingSource += .03
-        // TweenMax.to(settings,.1,{ pressing : '+=.01'})
-      }
-    })
+    
 
     $(window).on('mousemove touchmove', (e) => {
         const nx = e.clientX / window.innerWidth * 2 - 1;

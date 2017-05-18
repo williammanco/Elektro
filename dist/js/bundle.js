@@ -99912,25 +99912,48 @@ var Elektro = function () {
 
       this.infoDiv = document.createElement("div");
       this.infoDiv.setAttribute("id", "html-content");
-      this.infoDiv.innerHTML = '\n      <div id="fastBlack"></div>\n      <div id="info-container">\n        <div class="title">Nervous Ball</div>\n        <div class="description">forever clicking ...</div>\n        <div class="level">\n          <div class="current inline">level <span id="current-level"></span></div>\n        </div>\n      </div>\n      <div id="spot">\n        <div>never</div>\n        <div>ending</div>\n        <div>click</div>\n      </div>\n    ';
+      this.infoDiv.innerHTML = '\n      <div id="fastBlack"></div>\n      <div id="info-container">\n        <div class="title">Nervous Ball</div>\n        <div class="description">forever clicking ...</div>\n        <div class="level">\n          <div class="current inline">level <span id="current-level"></span></div>\n        </div>\n      </div>\n      <div id="spot">\n        <div>never</div>\n        <div>ending</div>\n        <div>click</div>\n      </div>\n      <div id="repeatClick">\n        <div>Do not stop clicking, nervous the ball</div>\n      </div>\n    ';
       $('body').append(this.infoDiv);
       $('#current-level').html(':(');
       if (window.localStorage.level != undefined) {
         window.localStorage.level = _settings2.default.level;
       }
       $('#spot div').blast({ delimiter: "character" }).css('visibility', 'visible');
+
+      $('#repeatClick div').blast({ delimiter: "character" }).css('visibility', 'visible');
     }
   }, {
     key: 'removeIntro',
     value: function removeIntro() {
       var caosLetter = this.utils.getShuffleArray($('#spot .blast'));
-      this.timelineIntro = new TimelineMax();
+      this.timelineIntro = new TimelineMax({ onComplete: function onComplete() {
+          setTimeout(function () {
+            _settings2.default.introOut = true;
+            if (!_settings2.default.firstClick) {
+              TweenMax.staggerTo('#repeatClick .blast', 2, { opacity: 1, ease: Power4.easeIn }, .02, 1);
+            }
+          }, 2000);
+        } });
       this.timelineIntro.staggerFromTo('#spot .blast', 2, { opacity: 0 }, { opacity: 1, ease: Power4.easeIn }, .02, 1).to('#fastBlack', 4, { opacity: 0, ease: Power4.easeInOut }, 3).staggerTo(caosLetter, 2, { opacity: 0, ease: Power4.easeInOut }, .05);
     }
   }, {
     key: 'events',
     value: function events() {
+      var _this = this;
+
       var self = this;
+
+      $(window).on('mouseup touchstart', function (e) {
+        if (_settings2.default.pressingSource < 1.5) {
+          _settings2.default.pressingSource += .03;
+          // TweenMax.to(settings,.1,{ pressing : '+=.01'})
+        }
+        if (_settings2.default.introOut && !_settings2.default.firstClick) {
+          var caosLetter = _this.utils.getShuffleArray($('#repeatClick .blast'));
+          TweenMax.staggerTo(caosLetter, 2, { opacity: 0, ease: Power4.easeInOut }, .05);
+        }
+        _settings2.default.firstClick = true;
+      });
 
       $(window).on('mousemove touchmove', function (event) {
         var x = event.clientX / window.innerWidth * 2 - 1;
@@ -100114,13 +100137,6 @@ var Canvas = function () {
 
       var cameraPanRange = 1.0,
           cameraYawRange = cameraPanRange * 1.125;
-
-      $(window).on('mouseup touchstart', function (e) {
-        if (_settings2.default.pressingSource < 1.5) {
-          _settings2.default.pressingSource += .03;
-          // TweenMax.to(settings,.1,{ pressing : '+=.01'})
-        }
-      });
 
       $(window).on('mousemove touchmove', function (e) {
         var nx = e.clientX / window.innerWidth * 2 - 1;
@@ -106166,7 +106182,7 @@ exports = module.exports = __webpack_require__(547)(undefined);
 
 
 // module
-exports.push([module.i, "html, body {\n  margin: 0;\n  padding: 0;\n  background-color: #101010;\n  overflow: hidden;\n  font-family: 'Fira Mono', monospace;\n  color: #ccc;\n  user-select: none; }\n\n#html-content {\n  position: fixed;\n  z-index: 1; }\n\n#info-container {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  z-index: 0;\n  margin: 15px;\n  padding: 10px 20px;\n  font-size: 12px;\n  background-color: rgba(0, 0, 0, 0.2); }\n  #info-container .title {\n    margin-bottom: 5px;\n    font-size: 11px;\n    text-transform: uppercase; }\n  #info-container .level {\n    margin-top: 10px; }\n  #info-container .inline {\n    display: inline-block; }\n  #info-container .max {\n    margin-left: 35px; }\n\n#spot {\n  position: fixed;\n  z-index: 2;\n  top: 50%;\n  left: 50%;\n  transform: translateX(-50%) translateY(-50%); }\n  #spot div {\n    font-size: 40px;\n    color: #fff;\n    visibility: hidden; }\n\n#fastBlack {\n  background-color: #101010;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  z-index: 1;\n  top: 0;\n  left: 0; }\n", ""]);
+exports.push([module.i, "html, body {\n  margin: 0;\n  padding: 0;\n  background-color: #101010;\n  overflow: hidden;\n  font-family: 'Fira Mono', monospace;\n  color: #ccc;\n  user-select: none; }\n\n#html-content {\n  position: fixed;\n  z-index: 1; }\n\n#info-container {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  z-index: 0;\n  margin: 15px;\n  padding: 10px 20px;\n  font-size: 12px;\n  background-color: rgba(0, 0, 0, 0.2); }\n  #info-container .title {\n    margin-bottom: 5px;\n    font-size: 11px;\n    text-transform: uppercase; }\n  #info-container .level {\n    margin-top: 10px; }\n  #info-container .inline {\n    display: inline-block; }\n  #info-container .max {\n    margin-left: 35px; }\n\n#spot {\n  position: fixed;\n  z-index: 2;\n  top: 50%;\n  left: 50%;\n  transform: translateX(-50%) translateY(-50%); }\n  #spot div {\n    font-size: 40px;\n    color: #fff;\n    visibility: hidden; }\n\n#repeatClick {\n  position: fixed;\n  bottom: 0;\n  right: 0;\n  margin: 15px;\n  z-index: 1; }\n  #repeatClick div {\n    visibility: hidden;\n    font-size: 12px;\n    color: #fff; }\n  #repeatClick span {\n    opacity: 0; }\n\n#fastBlack {\n  background-color: #101010;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  z-index: 1;\n  top: 0;\n  left: 0; }\n", ""]);
 
 // exports
 

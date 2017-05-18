@@ -76,6 +76,9 @@ export default class Elektro {
         <div>ending</div>
         <div>click</div>
       </div>
+      <div id="repeatClick">
+        <div>Do not stop clicking, nervous the ball</div>
+      </div>
     `
     $('body').append(this.infoDiv)
     $('#current-level').html(':(')
@@ -86,20 +89,42 @@ export default class Elektro {
     .blast({ delimiter: "character" })
     .css('visibility','visible')
 
+    $('#repeatClick div')
+    .blast({ delimiter: "character" })
+    .css('visibility','visible')
+
   }
 
   removeIntro(){
     let caosLetter = this.utils.getShuffleArray($('#spot .blast'))
-    this.timelineIntro = new TimelineMax()
+    this.timelineIntro = new TimelineMax({ onComplete : function(){
+      setTimeout(function(){
+        settings.introOut = true
+        if(!settings.firstClick){
+          TweenMax.staggerTo('#repeatClick .blast', 2, { opacity: 1, ease: Power4.easeIn },.02,1)
+        }
+      },2000)
+    }})
     this.timelineIntro
     .staggerFromTo('#spot .blast', 2, {opacity:0},{ opacity: 1, ease: Power4.easeIn },.02,1)
     .to('#fastBlack', 4, { opacity: 0,ease: Power4.easeInOut },3)
     .staggerTo(caosLetter, 2, { opacity: 0, ease: Power4.easeInOut },.05)
-
   }
 
   events(){
     const self = this
+
+    $(window).on('mouseup touchstart', (e) => {
+      if(settings.pressingSource < 1.5){
+        settings.pressingSource += .03
+        // TweenMax.to(settings,.1,{ pressing : '+=.01'})
+      }
+      if(settings.introOut && !settings.firstClick){
+        let caosLetter = this.utils.getShuffleArray($('#repeatClick .blast'))
+        TweenMax.staggerTo(caosLetter, 2, { opacity: 0, ease: Power4.easeInOut },.05)
+      }
+      settings.firstClick = true
+    })
 
     $(window).on( 'mousemove touchmove', function(event){
       let x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -111,6 +136,7 @@ export default class Elektro {
       self.kick.play()
       $('#current-level').html(settings.level)
     })
+
   }
 
   onLoaderComplete() {
