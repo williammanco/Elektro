@@ -43,6 +43,10 @@ export default class MeshDeformed extends Object3D{
       vertexShader: self.options.vertex,
       fragmentShader: self.options.fragment,
     })
+
+    // settings.textures.base.minFilter = THREE.LinearFilter
+    // settings.textures.normal.minFilter = THREE.LinearFilter
+
     this.material.uniforms.texture.value = settings.textures.base
     this.material.uniforms.tNormal.value = settings.textures.normal
 

@@ -15,7 +15,6 @@ export default class Canvas {
     this.renderer = new WebGLRenderer({ antialising: true, alpha: true  })
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.renderer.setSize( width, height )
-    // this.renderer.setClearColor(0x000000)
     this.camera =  new PerspectiveCamera( 75, width / height, 1, 10000)
     this.camera.position.x = 0
     this.camera.position.y = 0
@@ -27,9 +26,7 @@ export default class Canvas {
     this.time = 0
     document.body.appendChild( this.renderer.domElement )
 
-
     ;(function(){Math.clamp=function(a,b,c){return Math.max(b,Math.min(c,a));}})()
-
 
   }
   loader(){
@@ -81,43 +78,25 @@ export default class Canvas {
   events(){
     const self = this
 
-    // document.addEventListener('keydown', (event) => {
-    //   const keyName = event.key;
-    //
-    // }, false);
-    // document.addEventListener('keyup', (event) => {
-    //   const keyName = event.key;
-    //   if(event.code == 'Space'){
-    //     if(settings.pressingSource < 1.5){
-    //       settings.pressingSource += .01
-    //       // TweenMax.to(settings,.1,{ pressing : '+=.01'})
-    //     }
-    //   }
-    // }, false);
-
-    let cameraPanRange = 1.0, cameraYawRange = cameraPanRange * 1.125;
-
-    
+    let cameraPanRange = 1.0, cameraYawRange = cameraPanRange * 1.125
 
     $(window).on('mousemove touchmove', (e) => {
-        const nx = e.clientX / window.innerWidth * 2 - 1;
-        const ny = -e.clientY / window.innerHeight * 2 + 1;
-        const ry = -THREE.Math.mapLinear(nx, -1, 1, cameraPanRange * -0.5, cameraPanRange * 0.5);
-        const rx = THREE.Math.mapLinear(ny, -1, 1, cameraYawRange * -0.5, cameraYawRange * 0.5);
+        const nx = e.clientX / window.innerWidth * 2 - 1
+        const ny = -e.clientY / window.innerHeight * 2 + 1
+        const ry = -THREE.Math.mapLinear(nx, -1, 1, cameraPanRange * -0.5, cameraPanRange * 0.5)
+        const rx = THREE.Math.mapLinear(ny, -1, 1, cameraYawRange * -0.5, cameraYawRange * 0.5)
 
         TweenMax.to(this.camera.rotation, 2, {
           x: rx,
           y: ry,
           ease: Power4.easeOut,
-        });
-      });
+        })
+      })
 
     $(window).on('app.levelUpper', function(){
       self.setText()
       self.setTimelineLevelUpper()
     })
-
-
   }
 
   resize(width, height) {
@@ -141,7 +120,6 @@ export default class Canvas {
     this.camera.up = new Vector3(0,0,1);
     this.camera.lookAt(new Vector3(0,0,0));
     this.camera.needsUpdate = true
-
   }
 
   setTimelineLevelUpper(){
@@ -152,7 +130,6 @@ export default class Canvas {
     // .to(this.textLevelUpper.mesh.scale, 2, {x:1,y:1,z:1 },0)
     .fromTo(this.textLevelUpper.material, .2, {opacity: 0},{opacity: 1},0)
     // .to(this.textLevelUpper.material, .3, {opacity: 0})
-
   }
 
   setText(){

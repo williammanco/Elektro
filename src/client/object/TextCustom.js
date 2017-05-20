@@ -2,9 +2,6 @@ import { Object3D, Matrix4, TextGeometry, MeshBasicMaterial, Mesh } from 'three'
 import settings from '../settings.js'
 import Utils from '../utils'
 
-
-
-
 export default class TextCustom extends Object3D{
   constructor(text,size){
     super()

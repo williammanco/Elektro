@@ -3,7 +3,6 @@
 import path from 'path'
 import webpack from 'webpack'
 import { WDS_PORT } from './src/shared/config'
-import { isProd } from './src/shared/util'
 import DashboardPlugin from 'webpack-dashboard/plugin'
 import UglifyJSPlugin from 'uglifyjs-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
@@ -23,7 +22,7 @@ export default {
   output: {
     filename: 'js/bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: isProd ? './dist/' : `./dist/`,
+    publicPath: process.env.NODE_ENV === 'production' ? './dist/' : `http://localhost:${WDS_PORT}/dist/`,
   },
   plugins: [
     new DashboardPlugin(),
@@ -58,7 +57,7 @@ export default {
       ]}
     ]
   },
-  devtool: isProd ? false : 'source-map',
+  devtool: process.env.NODE_ENV === 'production' ? false : 'source-map',
   resolve: {
     extensions: ['.js', '.jsx'],
   },

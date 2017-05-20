@@ -3,7 +3,7 @@ import settings from '../settings.js'
 import Utils from '../utils.js'
 const vert = require('../assets/shader/snow.vert')
 const frag = require('../assets/shader/snow.frag')
-const particleImage = require('../textures/particle2.png')
+const particleImage = require('../textures/particle.png')
 
 export default class ParticleSystem extends Object3D{
   constructor(state) {
@@ -39,11 +39,16 @@ export default class ParticleSystem extends Object3D{
     this.geom.addAttribute( 'alpha', new BufferAttribute( this.alpha, 1 ) );
     this.geom.computeBoundingSphere()
 
+    settings.textures.particle = new TextureLoader().load(particleImage)
+    settings.textures.particle.minFilter = THREE.LinearFilter
+
+
+
     this.mat = new ShaderMaterial({
       vertexShader: vert,
       fragmentShader: frag,
       uniforms: {
-        'texture': { type: 't', value: new TextureLoader().load(particleImage) },
+        'texture': { type: 't', value: settings.textures.particle },
         'color': { type: 'c', value: new Color(0xd200ff) }
       },
       transparent: true,
@@ -67,26 +72,11 @@ export default class ParticleSystem extends Object3D{
 
 
   update(state) {
-    // if(settings.explodeStart){
-    //   this.explode()
-    // }else{
-    //   this.sparks()
-    // }
-    //
     if(settings.explodeStart){
-      // this.timelineText.play()
       this.timelineExplode.play()
-
-      if(settings.audio.deltaTween > settings.explode.limit){
-      }else{
-        // this.timelineExplode.reverse()
-
-      }
     }else{
       this.timelineExplode.reverse()
-
     }
-
 
     let positions = this.particles.geometry.attributes.position.array
     // let positionsText = settings.textCustomGeometry._bufferGeometry.attributes.position.array

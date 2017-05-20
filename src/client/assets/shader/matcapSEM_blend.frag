@@ -29,16 +29,11 @@ varying vec3 fPosition;
 varying vec3 fNormal;
 
 varying vec2 vUv;
-varying vec3 vTangent;
-varying vec3 vBinormal;
 varying vec3 vNormal;
 varying vec3 vU;
-varying vec2 vN;
 
 varying vec4 vPosition;
-varying vec4 vOPosition;
 varying vec3 vONormal;
-varying vec3 vEye;
 
 
 float random(vec3 scale,float seed)

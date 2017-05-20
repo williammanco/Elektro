@@ -17,9 +17,9 @@ const kick = require('./assets/mp3/kick.mp3')
 const meter = new DecibelMeter('unique-id')
 const imageBase = require('./assets/img/matblender.png')
 const imageNormal = require('./assets/img/fresh_snow-normal.jpg')
-require('./assets/css/main.sass')
+require('./assets/sass/main.sass')
 
-export default class Elektro {
+export default class App {
   constructor(){
     this.state = {
       audio : {}
@@ -155,4 +155,4 @@ export default class Elektro {
   }
 }
 
-const app = new Elektro()
+const app = new App()
