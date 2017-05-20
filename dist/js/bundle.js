@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "localhost:7000/dist/";
+/******/ 	__webpack_require__.p = "./dist/";
 /******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 779);
@@ -10993,7 +10993,7 @@ Vector4.prototype = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__math_Triangle__ = __webpack_require__(301);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__core_Face3__ = __webpack_require__(89);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__constants__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__materials_MeshBasicMaterial__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__materials_MeshBasicMaterial__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__core_BufferGeometry__ = __webpack_require__(3);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Mesh; });
 
@@ -11471,7 +11471,7 @@ if(__webpack_require__(16)){
     , createArrayIncludes = __webpack_require__(112)
     , speciesConstructor  = __webpack_require__(165)
     , ArrayIterators      = __webpack_require__(174)
-    , Iterators           = __webpack_require__(85)
+    , Iterators           = __webpack_require__(86)
     , $iterDetect         = __webpack_require__(118)
     , setSpecies          = __webpack_require__(73)
     , arrayFill           = __webpack_require__(149)
@@ -12910,680 +12910,6 @@ function isSafeNumber(value) {
 
 /***/ }),
 /* 77 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__AnimationUtils__ = __webpack_require__(103);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return KeyframeTrackConstructor; });
-
-
-function KeyframeTrackConstructor( name, times, values, interpolation ) {
-
-	if( name === undefined ) throw new Error( "track name is undefined" );
-
-	if( times === undefined || times.length === 0 ) {
-
-		throw new Error( "no keyframes in track named " + name );
-
-	}
-
-	this.name = name;
-
-	this.times = __WEBPACK_IMPORTED_MODULE_0__AnimationUtils__["a" /* AnimationUtils */].convertArray( times, this.TimeBufferType );
-	this.values = __WEBPACK_IMPORTED_MODULE_0__AnimationUtils__["a" /* AnimationUtils */].convertArray( values, this.ValueBufferType );
-
-	this.setInterpolation( interpolation || this.DefaultInterpolation );
-
-	this.validate();
-	this.optimize();
-
-}
-
-
-
-
-/***/ }),
-/* 78 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__ = __webpack_require__(103);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__math_interpolants_CubicInterpolant__ = __webpack_require__(302);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__math_interpolants_LinearInterpolant__ = __webpack_require__(200);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__math_interpolants_DiscreteInterpolant__ = __webpack_require__(303);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return KeyframeTrackPrototype; });
-
-
-
-
-
-
-
-var KeyframeTrackPrototype;
-
-KeyframeTrackPrototype = {
-
-	TimeBufferType: Float32Array,
-	ValueBufferType: Float32Array,
-
-	DefaultInterpolation: __WEBPACK_IMPORTED_MODULE_0__constants__["_55" /* InterpolateLinear */],
-
-	InterpolantFactoryMethodDiscrete: function ( result ) {
-
-		return new __WEBPACK_IMPORTED_MODULE_4__math_interpolants_DiscreteInterpolant__["a" /* DiscreteInterpolant */](
-				this.times, this.values, this.getValueSize(), result );
-
-	},
-
-	InterpolantFactoryMethodLinear: function ( result ) {
-
-		return new __WEBPACK_IMPORTED_MODULE_3__math_interpolants_LinearInterpolant__["a" /* LinearInterpolant */](
-				this.times, this.values, this.getValueSize(), result );
-
-	},
-
-	InterpolantFactoryMethodSmooth: function ( result ) {
-
-		return new __WEBPACK_IMPORTED_MODULE_2__math_interpolants_CubicInterpolant__["a" /* CubicInterpolant */](
-				this.times, this.values, this.getValueSize(), result );
-
-	},
-
-	setInterpolation: function ( interpolation ) {
-
-		var factoryMethod;
-
-		switch ( interpolation ) {
-
-			case __WEBPACK_IMPORTED_MODULE_0__constants__["_54" /* InterpolateDiscrete */]:
-
-				factoryMethod = this.InterpolantFactoryMethodDiscrete;
-
-				break;
-
-			case __WEBPACK_IMPORTED_MODULE_0__constants__["_55" /* InterpolateLinear */]:
-
-				factoryMethod = this.InterpolantFactoryMethodLinear;
-
-				break;
-
-			case __WEBPACK_IMPORTED_MODULE_0__constants__["_56" /* InterpolateSmooth */]:
-
-				factoryMethod = this.InterpolantFactoryMethodSmooth;
-
-				break;
-
-		}
-
-		if ( factoryMethod === undefined ) {
-
-			var message = "unsupported interpolation for " +
-					this.ValueTypeName + " keyframe track named " + this.name;
-
-			if ( this.createInterpolant === undefined ) {
-
-				// fall back to default, unless the default itself is messed up
-				if ( interpolation !== this.DefaultInterpolation ) {
-
-					this.setInterpolation( this.DefaultInterpolation );
-
-				} else {
-
-					throw new Error( message ); // fatal, in this case
-
-				}
-
-			}
-
-			console.warn( message );
-			return;
-
-		}
-
-		this.createInterpolant = factoryMethod;
-
-	},
-
-	getInterpolation: function () {
-
-		switch ( this.createInterpolant ) {
-
-			case this.InterpolantFactoryMethodDiscrete:
-
-				return __WEBPACK_IMPORTED_MODULE_0__constants__["_54" /* InterpolateDiscrete */];
-
-			case this.InterpolantFactoryMethodLinear:
-
-				return __WEBPACK_IMPORTED_MODULE_0__constants__["_55" /* InterpolateLinear */];
-
-			case this.InterpolantFactoryMethodSmooth:
-
-				return __WEBPACK_IMPORTED_MODULE_0__constants__["_56" /* InterpolateSmooth */];
-
-		}
-
-	},
-
-	getValueSize: function () {
-
-		return this.values.length / this.times.length;
-
-	},
-
-	// move all keyframes either forwards or backwards in time
-	shift: function ( timeOffset ) {
-
-		if ( timeOffset !== 0.0 ) {
-
-			var times = this.times;
-
-			for ( var i = 0, n = times.length; i !== n; ++ i ) {
-
-				times[ i ] += timeOffset;
-
-			}
-
-		}
-
-		return this;
-
-	},
-
-	// scale all keyframe times by a factor (useful for frame <-> seconds conversions)
-	scale: function ( timeScale ) {
-
-		if ( timeScale !== 1.0 ) {
-
-			var times = this.times;
-
-			for ( var i = 0, n = times.length; i !== n; ++ i ) {
-
-				times[ i ] *= timeScale;
-
-			}
-
-		}
-
-		return this;
-
-	},
-
-	// removes keyframes before and after animation without changing any values within the range [startTime, endTime].
-	// IMPORTANT: We do not shift around keys to the start of the track time, because for interpolated keys this will change their values
-	trim: function ( startTime, endTime ) {
-
-		var times = this.times,
-			nKeys = times.length,
-			from = 0,
-			to = nKeys - 1;
-
-		while ( from !== nKeys && times[ from ] < startTime ) ++ from;
-		while ( to !== - 1 && times[ to ] > endTime ) -- to;
-
-		++ to; // inclusive -> exclusive bound
-
-		if ( from !== 0 || to !== nKeys ) {
-
-			// empty tracks are forbidden, so keep at least one keyframe
-			if ( from >= to ) to = Math.max( to, 1 ), from = to - 1;
-
-			var stride = this.getValueSize();
-			this.times = __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__["a" /* AnimationUtils */].arraySlice( times, from, to );
-			this.values = __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__["a" /* AnimationUtils */].
-					arraySlice( this.values, from * stride, to * stride );
-
-		}
-
-		return this;
-
-	},
-
-	// ensure we do not get a GarbageInGarbageOut situation, make sure tracks are at least minimally viable
-	validate: function () {
-
-		var valid = true;
-
-		var valueSize = this.getValueSize();
-		if ( valueSize - Math.floor( valueSize ) !== 0 ) {
-
-			console.error( "invalid value size in track", this );
-			valid = false;
-
-		}
-
-		var times = this.times,
-			values = this.values,
-
-			nKeys = times.length;
-
-		if ( nKeys === 0 ) {
-
-			console.error( "track is empty", this );
-			valid = false;
-
-		}
-
-		var prevTime = null;
-
-		for ( var i = 0; i !== nKeys; i ++ ) {
-
-			var currTime = times[ i ];
-
-			if ( typeof currTime === 'number' && isNaN( currTime ) ) {
-
-				console.error( "time is not a valid number", this, i, currTime );
-				valid = false;
-				break;
-
-			}
-
-			if ( prevTime !== null && prevTime > currTime ) {
-
-				console.error( "out of order keys", this, i, currTime, prevTime );
-				valid = false;
-				break;
-
-			}
-
-			prevTime = currTime;
-
-		}
-
-		if ( values !== undefined ) {
-
-			if ( __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__["a" /* AnimationUtils */].isTypedArray( values ) ) {
-
-				for ( var i = 0, n = values.length; i !== n; ++ i ) {
-
-					var value = values[ i ];
-
-					if ( isNaN( value ) ) {
-
-						console.error( "value is not a valid number", this, i, value );
-						valid = false;
-						break;
-
-					}
-
-				}
-
-			}
-
-		}
-
-		return valid;
-
-	},
-
-	// removes equivalent sequential keys as common in morph target sequences
-	// (0,0,0,0,1,1,1,0,0,0,0,0,0,0) --> (0,0,1,1,0,0)
-	optimize: function () {
-
-		var times = this.times,
-			values = this.values,
-			stride = this.getValueSize(),
-
-			smoothInterpolation = this.getInterpolation() === __WEBPACK_IMPORTED_MODULE_0__constants__["_56" /* InterpolateSmooth */],
-
-			writeIndex = 1,
-			lastIndex = times.length - 1;
-
-		for ( var i = 1; i < lastIndex; ++ i ) {
-
-			var keep = false;
-
-			var time = times[ i ];
-			var timeNext = times[ i + 1 ];
-
-			// remove adjacent keyframes scheduled at the same time
-
-			if ( time !== timeNext && ( i !== 1 || time !== time[ 0 ] ) ) {
-
-				if ( ! smoothInterpolation ) {
-
-					// remove unnecessary keyframes same as their neighbors
-
-					var offset = i * stride,
-						offsetP = offset - stride,
-						offsetN = offset + stride;
-
-					for ( var j = 0; j !== stride; ++ j ) {
-
-						var value = values[ offset + j ];
-
-						if ( value !== values[ offsetP + j ] ||
-								value !== values[ offsetN + j ] ) {
-
-							keep = true;
-							break;
-
-						}
-
-					}
-
-				} else keep = true;
-
-			}
-
-			// in-place compaction
-
-			if ( keep ) {
-
-				if ( i !== writeIndex ) {
-
-					times[ writeIndex ] = times[ i ];
-
-					var readOffset = i * stride,
-						writeOffset = writeIndex * stride;
-
-					for ( var j = 0; j !== stride; ++ j )
-
-						values[ writeOffset + j ] = values[ readOffset + j ];
-
-				}
-
-				++ writeIndex;
-
-			}
-
-		}
-
-		// flush last keyframe (compaction looks ahead)
-
-		if ( lastIndex > 0 ) {
-
-			times[ writeIndex ] = times[ lastIndex ];
-
-			for ( var readOffset = lastIndex * stride, writeOffset = writeIndex * stride, j = 0; j !== stride; ++ j )
-
-				values[ writeOffset + j ] = values[ readOffset + j ];
-
-			++ writeIndex;
-
-		}
-
-		if ( writeIndex !== times.length ) {
-
-			this.times = __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__["a" /* AnimationUtils */].arraySlice( times, 0, writeIndex );
-			this.values = __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__["a" /* AnimationUtils */].arraySlice( values, 0, writeIndex * stride );
-
-		}
-
-		return this;
-
-	}
-
-};
-
-
-
-
-/***/ }),
-/* 79 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Material__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__math_Color__ = __webpack_require__(10);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MeshBasicMaterial; });
-
-
-
-
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author alteredq / http://alteredqualia.com/
- *
- * parameters = {
- *  color: <hex>,
- *  opacity: <float>,
- *  map: new THREE.Texture( <Image> ),
- *
- *  lightMap: new THREE.Texture( <Image> ),
- *  lightMapIntensity: <float>
- *
- *  aoMap: new THREE.Texture( <Image> ),
- *  aoMapIntensity: <float>
- *
- *  specularMap: new THREE.Texture( <Image> ),
- *
- *  alphaMap: new THREE.Texture( <Image> ),
- *
- *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
- *  combine: THREE.Multiply,
- *  reflectivity: <float>,
- *  refractionRatio: <float>,
- *
- *  shading: THREE.SmoothShading,
- *  depthTest: <bool>,
- *  depthWrite: <bool>,
- *
- *  wireframe: <boolean>,
- *  wireframeLinewidth: <float>,
- *
- *  skinning: <bool>,
- *  morphTargets: <bool>
- * }
- */
-
-function MeshBasicMaterial( parameters ) {
-
-	__WEBPACK_IMPORTED_MODULE_0__Material__["a" /* Material */].call( this );
-
-	this.type = 'MeshBasicMaterial';
-
-	this.color = new __WEBPACK_IMPORTED_MODULE_2__math_Color__["a" /* Color */]( 0xffffff ); // emissive
-
-	this.map = null;
-
-	this.lightMap = null;
-	this.lightMapIntensity = 1.0;
-
-	this.aoMap = null;
-	this.aoMapIntensity = 1.0;
-
-	this.specularMap = null;
-
-	this.alphaMap = null;
-
-	this.envMap = null;
-	this.combine = __WEBPACK_IMPORTED_MODULE_1__constants__["X" /* MultiplyOperation */];
-	this.reflectivity = 1;
-	this.refractionRatio = 0.98;
-
-	this.wireframe = false;
-	this.wireframeLinewidth = 1;
-	this.wireframeLinecap = 'round';
-	this.wireframeLinejoin = 'round';
-
-	this.skinning = false;
-	this.morphTargets = false;
-
-	this.lights = false;
-
-	this.setValues( parameters );
-
-}
-
-MeshBasicMaterial.prototype = Object.create( __WEBPACK_IMPORTED_MODULE_0__Material__["a" /* Material */].prototype );
-MeshBasicMaterial.prototype.constructor = MeshBasicMaterial;
-
-MeshBasicMaterial.prototype.isMeshBasicMaterial = true;
-
-MeshBasicMaterial.prototype.copy = function ( source ) {
-
-	__WEBPACK_IMPORTED_MODULE_0__Material__["a" /* Material */].prototype.copy.call( this, source );
-
-	this.color.copy( source.color );
-
-	this.map = source.map;
-
-	this.lightMap = source.lightMap;
-	this.lightMapIntensity = source.lightMapIntensity;
-
-	this.aoMap = source.aoMap;
-	this.aoMapIntensity = source.aoMapIntensity;
-
-	this.specularMap = source.specularMap;
-
-	this.alphaMap = source.alphaMap;
-
-	this.envMap = source.envMap;
-	this.combine = source.combine;
-	this.reflectivity = source.reflectivity;
-	this.refractionRatio = source.refractionRatio;
-
-	this.wireframe = source.wireframe;
-	this.wireframeLinewidth = source.wireframeLinewidth;
-	this.wireframeLinecap = source.wireframeLinecap;
-	this.wireframeLinejoin = source.wireframeLinejoin;
-
-	this.skinning = source.skinning;
-	this.morphTargets = source.morphTargets;
-
-	return this;
-
-};
-
-
-
-
-
-/***/ }),
-/* 80 */
-/***/ (function(module, exports) {
-
-var core = module.exports = {version: '2.4.0'};
-if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-
-/***/ }),
-/* 81 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var dP         = __webpack_require__(65)
-  , createDesc = __webpack_require__(110);
-module.exports = __webpack_require__(63) ? function(object, key, value){
-  return dP.f(object, key, createDesc(1, value));
-} : function(object, key, value){
-  object[key] = value;
-  return object;
-};
-
-/***/ }),
-/* 82 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var store      = __webpack_require__(144)('wks')
-  , uid        = __webpack_require__(111)
-  , Symbol     = __webpack_require__(56).Symbol
-  , USE_SYMBOL = typeof Symbol == 'function';
-
-var $exports = module.exports = function(name){
-  return store[name] || (store[name] =
-    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
-};
-
-$exports.store = store;
-
-/***/ }),
-/* 83 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 22.1.3.31 Array.prototype[@@unscopables]
-var UNSCOPABLES = __webpack_require__(14)('unscopables')
-  , ArrayProto  = Array.prototype;
-if(ArrayProto[UNSCOPABLES] == undefined)__webpack_require__(25)(ArrayProto, UNSCOPABLES, {});
-module.exports = function(key){
-  ArrayProto[UNSCOPABLES][key] = true;
-};
-
-/***/ }),
-/* 84 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var ctx         = __webpack_require__(52)
-  , call        = __webpack_require__(230)
-  , isArrayIter = __webpack_require__(156)
-  , anObject    = __webpack_require__(4)
-  , toLength    = __webpack_require__(18)
-  , getIterFn   = __webpack_require__(173)
-  , BREAK       = {}
-  , RETURN      = {};
-var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
-  var iterFn = ITERATOR ? function(){ return iterable; } : getIterFn(iterable)
-    , f      = ctx(fn, that, entries ? 2 : 1)
-    , index  = 0
-    , length, step, iterator, result;
-  if(typeof iterFn != 'function')throw TypeError(iterable + ' is not iterable!');
-  // fast case for arrays with default iterator
-  if(isArrayIter(iterFn))for(length = toLength(iterable.length); length > index; index++){
-    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
-    if(result === BREAK || result === RETURN)return result;
-  } else for(iterator = iterFn.call(iterable); !(step = iterator.next()).done; ){
-    result = call(iterator, f, step.value, entries);
-    if(result === BREAK || result === RETURN)return result;
-  }
-};
-exports.BREAK  = BREAK;
-exports.RETURN = RETURN;
-
-/***/ }),
-/* 85 */
-/***/ (function(module, exports) {
-
-module.exports = {};
-
-/***/ }),
-/* 86 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var def = __webpack_require__(17).f
-  , has = __webpack_require__(22)
-  , TAG = __webpack_require__(14)('toStringTag');
-
-module.exports = function(it, tag, stat){
-  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
-};
-
-/***/ }),
-/* 87 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var $export = __webpack_require__(0)
-  , defined = __webpack_require__(40)
-  , fails   = __webpack_require__(9)
-  , spaces  = __webpack_require__(169)
-  , space   = '[' + spaces + ']'
-  , non     = '\u200b\u0085'
-  , ltrim   = RegExp('^' + space + space + '*')
-  , rtrim   = RegExp(space + space + '*$');
-
-var exporter = function(KEY, exec, ALIAS){
-  var exp   = {};
-  var FORCE = fails(function(){
-    return !!spaces[KEY]() || non[KEY]() != non;
-  });
-  var fn = exp[KEY] = FORCE ? exec(trim) : spaces[KEY];
-  if(ALIAS)exp[ALIAS] = fn;
-  $export($export.P + $export.F * FORCE, 'String', exp);
-};
-
-// 1 -> String#trimLeft
-// 2 -> String#trimRight
-// 3 -> String#trim
-var trim = exporter.trim = function(string, TYPE){
-  string = String(defined(string));
-  if(TYPE & 1)string = string.replace(ltrim, '');
-  if(TYPE & 2)string = string.replace(rtrim, '');
-  return string;
-};
-
-module.exports = exporter;
-
-/***/ }),
-/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -56880,7 +56206,681 @@ function CanvasRenderer() {
 
 
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(88)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(77)))
+
+/***/ }),
+/* 78 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__AnimationUtils__ = __webpack_require__(103);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return KeyframeTrackConstructor; });
+
+
+function KeyframeTrackConstructor( name, times, values, interpolation ) {
+
+	if( name === undefined ) throw new Error( "track name is undefined" );
+
+	if( times === undefined || times.length === 0 ) {
+
+		throw new Error( "no keyframes in track named " + name );
+
+	}
+
+	this.name = name;
+
+	this.times = __WEBPACK_IMPORTED_MODULE_0__AnimationUtils__["a" /* AnimationUtils */].convertArray( times, this.TimeBufferType );
+	this.values = __WEBPACK_IMPORTED_MODULE_0__AnimationUtils__["a" /* AnimationUtils */].convertArray( values, this.ValueBufferType );
+
+	this.setInterpolation( interpolation || this.DefaultInterpolation );
+
+	this.validate();
+	this.optimize();
+
+}
+
+
+
+
+/***/ }),
+/* 79 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__ = __webpack_require__(103);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__math_interpolants_CubicInterpolant__ = __webpack_require__(302);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__math_interpolants_LinearInterpolant__ = __webpack_require__(200);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__math_interpolants_DiscreteInterpolant__ = __webpack_require__(303);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return KeyframeTrackPrototype; });
+
+
+
+
+
+
+
+var KeyframeTrackPrototype;
+
+KeyframeTrackPrototype = {
+
+	TimeBufferType: Float32Array,
+	ValueBufferType: Float32Array,
+
+	DefaultInterpolation: __WEBPACK_IMPORTED_MODULE_0__constants__["_55" /* InterpolateLinear */],
+
+	InterpolantFactoryMethodDiscrete: function ( result ) {
+
+		return new __WEBPACK_IMPORTED_MODULE_4__math_interpolants_DiscreteInterpolant__["a" /* DiscreteInterpolant */](
+				this.times, this.values, this.getValueSize(), result );
+
+	},
+
+	InterpolantFactoryMethodLinear: function ( result ) {
+
+		return new __WEBPACK_IMPORTED_MODULE_3__math_interpolants_LinearInterpolant__["a" /* LinearInterpolant */](
+				this.times, this.values, this.getValueSize(), result );
+
+	},
+
+	InterpolantFactoryMethodSmooth: function ( result ) {
+
+		return new __WEBPACK_IMPORTED_MODULE_2__math_interpolants_CubicInterpolant__["a" /* CubicInterpolant */](
+				this.times, this.values, this.getValueSize(), result );
+
+	},
+
+	setInterpolation: function ( interpolation ) {
+
+		var factoryMethod;
+
+		switch ( interpolation ) {
+
+			case __WEBPACK_IMPORTED_MODULE_0__constants__["_54" /* InterpolateDiscrete */]:
+
+				factoryMethod = this.InterpolantFactoryMethodDiscrete;
+
+				break;
+
+			case __WEBPACK_IMPORTED_MODULE_0__constants__["_55" /* InterpolateLinear */]:
+
+				factoryMethod = this.InterpolantFactoryMethodLinear;
+
+				break;
+
+			case __WEBPACK_IMPORTED_MODULE_0__constants__["_56" /* InterpolateSmooth */]:
+
+				factoryMethod = this.InterpolantFactoryMethodSmooth;
+
+				break;
+
+		}
+
+		if ( factoryMethod === undefined ) {
+
+			var message = "unsupported interpolation for " +
+					this.ValueTypeName + " keyframe track named " + this.name;
+
+			if ( this.createInterpolant === undefined ) {
+
+				// fall back to default, unless the default itself is messed up
+				if ( interpolation !== this.DefaultInterpolation ) {
+
+					this.setInterpolation( this.DefaultInterpolation );
+
+				} else {
+
+					throw new Error( message ); // fatal, in this case
+
+				}
+
+			}
+
+			console.warn( message );
+			return;
+
+		}
+
+		this.createInterpolant = factoryMethod;
+
+	},
+
+	getInterpolation: function () {
+
+		switch ( this.createInterpolant ) {
+
+			case this.InterpolantFactoryMethodDiscrete:
+
+				return __WEBPACK_IMPORTED_MODULE_0__constants__["_54" /* InterpolateDiscrete */];
+
+			case this.InterpolantFactoryMethodLinear:
+
+				return __WEBPACK_IMPORTED_MODULE_0__constants__["_55" /* InterpolateLinear */];
+
+			case this.InterpolantFactoryMethodSmooth:
+
+				return __WEBPACK_IMPORTED_MODULE_0__constants__["_56" /* InterpolateSmooth */];
+
+		}
+
+	},
+
+	getValueSize: function () {
+
+		return this.values.length / this.times.length;
+
+	},
+
+	// move all keyframes either forwards or backwards in time
+	shift: function ( timeOffset ) {
+
+		if ( timeOffset !== 0.0 ) {
+
+			var times = this.times;
+
+			for ( var i = 0, n = times.length; i !== n; ++ i ) {
+
+				times[ i ] += timeOffset;
+
+			}
+
+		}
+
+		return this;
+
+	},
+
+	// scale all keyframe times by a factor (useful for frame <-> seconds conversions)
+	scale: function ( timeScale ) {
+
+		if ( timeScale !== 1.0 ) {
+
+			var times = this.times;
+
+			for ( var i = 0, n = times.length; i !== n; ++ i ) {
+
+				times[ i ] *= timeScale;
+
+			}
+
+		}
+
+		return this;
+
+	},
+
+	// removes keyframes before and after animation without changing any values within the range [startTime, endTime].
+	// IMPORTANT: We do not shift around keys to the start of the track time, because for interpolated keys this will change their values
+	trim: function ( startTime, endTime ) {
+
+		var times = this.times,
+			nKeys = times.length,
+			from = 0,
+			to = nKeys - 1;
+
+		while ( from !== nKeys && times[ from ] < startTime ) ++ from;
+		while ( to !== - 1 && times[ to ] > endTime ) -- to;
+
+		++ to; // inclusive -> exclusive bound
+
+		if ( from !== 0 || to !== nKeys ) {
+
+			// empty tracks are forbidden, so keep at least one keyframe
+			if ( from >= to ) to = Math.max( to, 1 ), from = to - 1;
+
+			var stride = this.getValueSize();
+			this.times = __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__["a" /* AnimationUtils */].arraySlice( times, from, to );
+			this.values = __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__["a" /* AnimationUtils */].
+					arraySlice( this.values, from * stride, to * stride );
+
+		}
+
+		return this;
+
+	},
+
+	// ensure we do not get a GarbageInGarbageOut situation, make sure tracks are at least minimally viable
+	validate: function () {
+
+		var valid = true;
+
+		var valueSize = this.getValueSize();
+		if ( valueSize - Math.floor( valueSize ) !== 0 ) {
+
+			console.error( "invalid value size in track", this );
+			valid = false;
+
+		}
+
+		var times = this.times,
+			values = this.values,
+
+			nKeys = times.length;
+
+		if ( nKeys === 0 ) {
+
+			console.error( "track is empty", this );
+			valid = false;
+
+		}
+
+		var prevTime = null;
+
+		for ( var i = 0; i !== nKeys; i ++ ) {
+
+			var currTime = times[ i ];
+
+			if ( typeof currTime === 'number' && isNaN( currTime ) ) {
+
+				console.error( "time is not a valid number", this, i, currTime );
+				valid = false;
+				break;
+
+			}
+
+			if ( prevTime !== null && prevTime > currTime ) {
+
+				console.error( "out of order keys", this, i, currTime, prevTime );
+				valid = false;
+				break;
+
+			}
+
+			prevTime = currTime;
+
+		}
+
+		if ( values !== undefined ) {
+
+			if ( __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__["a" /* AnimationUtils */].isTypedArray( values ) ) {
+
+				for ( var i = 0, n = values.length; i !== n; ++ i ) {
+
+					var value = values[ i ];
+
+					if ( isNaN( value ) ) {
+
+						console.error( "value is not a valid number", this, i, value );
+						valid = false;
+						break;
+
+					}
+
+				}
+
+			}
+
+		}
+
+		return valid;
+
+	},
+
+	// removes equivalent sequential keys as common in morph target sequences
+	// (0,0,0,0,1,1,1,0,0,0,0,0,0,0) --> (0,0,1,1,0,0)
+	optimize: function () {
+
+		var times = this.times,
+			values = this.values,
+			stride = this.getValueSize(),
+
+			smoothInterpolation = this.getInterpolation() === __WEBPACK_IMPORTED_MODULE_0__constants__["_56" /* InterpolateSmooth */],
+
+			writeIndex = 1,
+			lastIndex = times.length - 1;
+
+		for ( var i = 1; i < lastIndex; ++ i ) {
+
+			var keep = false;
+
+			var time = times[ i ];
+			var timeNext = times[ i + 1 ];
+
+			// remove adjacent keyframes scheduled at the same time
+
+			if ( time !== timeNext && ( i !== 1 || time !== time[ 0 ] ) ) {
+
+				if ( ! smoothInterpolation ) {
+
+					// remove unnecessary keyframes same as their neighbors
+
+					var offset = i * stride,
+						offsetP = offset - stride,
+						offsetN = offset + stride;
+
+					for ( var j = 0; j !== stride; ++ j ) {
+
+						var value = values[ offset + j ];
+
+						if ( value !== values[ offsetP + j ] ||
+								value !== values[ offsetN + j ] ) {
+
+							keep = true;
+							break;
+
+						}
+
+					}
+
+				} else keep = true;
+
+			}
+
+			// in-place compaction
+
+			if ( keep ) {
+
+				if ( i !== writeIndex ) {
+
+					times[ writeIndex ] = times[ i ];
+
+					var readOffset = i * stride,
+						writeOffset = writeIndex * stride;
+
+					for ( var j = 0; j !== stride; ++ j )
+
+						values[ writeOffset + j ] = values[ readOffset + j ];
+
+				}
+
+				++ writeIndex;
+
+			}
+
+		}
+
+		// flush last keyframe (compaction looks ahead)
+
+		if ( lastIndex > 0 ) {
+
+			times[ writeIndex ] = times[ lastIndex ];
+
+			for ( var readOffset = lastIndex * stride, writeOffset = writeIndex * stride, j = 0; j !== stride; ++ j )
+
+				values[ writeOffset + j ] = values[ readOffset + j ];
+
+			++ writeIndex;
+
+		}
+
+		if ( writeIndex !== times.length ) {
+
+			this.times = __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__["a" /* AnimationUtils */].arraySlice( times, 0, writeIndex );
+			this.values = __WEBPACK_IMPORTED_MODULE_1__AnimationUtils__["a" /* AnimationUtils */].arraySlice( values, 0, writeIndex * stride );
+
+		}
+
+		return this;
+
+	}
+
+};
+
+
+
+
+/***/ }),
+/* 80 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Material__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__math_Color__ = __webpack_require__(10);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MeshBasicMaterial; });
+
+
+
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  opacity: <float>,
+ *  map: new THREE.Texture( <Image> ),
+ *
+ *  lightMap: new THREE.Texture( <Image> ),
+ *  lightMapIntensity: <float>
+ *
+ *  aoMap: new THREE.Texture( <Image> ),
+ *  aoMapIntensity: <float>
+ *
+ *  specularMap: new THREE.Texture( <Image> ),
+ *
+ *  alphaMap: new THREE.Texture( <Image> ),
+ *
+ *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
+ *  combine: THREE.Multiply,
+ *  reflectivity: <float>,
+ *  refractionRatio: <float>,
+ *
+ *  shading: THREE.SmoothShading,
+ *  depthTest: <bool>,
+ *  depthWrite: <bool>,
+ *
+ *  wireframe: <boolean>,
+ *  wireframeLinewidth: <float>,
+ *
+ *  skinning: <bool>,
+ *  morphTargets: <bool>
+ * }
+ */
+
+function MeshBasicMaterial( parameters ) {
+
+	__WEBPACK_IMPORTED_MODULE_0__Material__["a" /* Material */].call( this );
+
+	this.type = 'MeshBasicMaterial';
+
+	this.color = new __WEBPACK_IMPORTED_MODULE_2__math_Color__["a" /* Color */]( 0xffffff ); // emissive
+
+	this.map = null;
+
+	this.lightMap = null;
+	this.lightMapIntensity = 1.0;
+
+	this.aoMap = null;
+	this.aoMapIntensity = 1.0;
+
+	this.specularMap = null;
+
+	this.alphaMap = null;
+
+	this.envMap = null;
+	this.combine = __WEBPACK_IMPORTED_MODULE_1__constants__["X" /* MultiplyOperation */];
+	this.reflectivity = 1;
+	this.refractionRatio = 0.98;
+
+	this.wireframe = false;
+	this.wireframeLinewidth = 1;
+	this.wireframeLinecap = 'round';
+	this.wireframeLinejoin = 'round';
+
+	this.skinning = false;
+	this.morphTargets = false;
+
+	this.lights = false;
+
+	this.setValues( parameters );
+
+}
+
+MeshBasicMaterial.prototype = Object.create( __WEBPACK_IMPORTED_MODULE_0__Material__["a" /* Material */].prototype );
+MeshBasicMaterial.prototype.constructor = MeshBasicMaterial;
+
+MeshBasicMaterial.prototype.isMeshBasicMaterial = true;
+
+MeshBasicMaterial.prototype.copy = function ( source ) {
+
+	__WEBPACK_IMPORTED_MODULE_0__Material__["a" /* Material */].prototype.copy.call( this, source );
+
+	this.color.copy( source.color );
+
+	this.map = source.map;
+
+	this.lightMap = source.lightMap;
+	this.lightMapIntensity = source.lightMapIntensity;
+
+	this.aoMap = source.aoMap;
+	this.aoMapIntensity = source.aoMapIntensity;
+
+	this.specularMap = source.specularMap;
+
+	this.alphaMap = source.alphaMap;
+
+	this.envMap = source.envMap;
+	this.combine = source.combine;
+	this.reflectivity = source.reflectivity;
+	this.refractionRatio = source.refractionRatio;
+
+	this.wireframe = source.wireframe;
+	this.wireframeLinewidth = source.wireframeLinewidth;
+	this.wireframeLinecap = source.wireframeLinecap;
+	this.wireframeLinejoin = source.wireframeLinejoin;
+
+	this.skinning = source.skinning;
+	this.morphTargets = source.morphTargets;
+
+	return this;
+
+};
+
+
+
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports) {
+
+var core = module.exports = {version: '2.4.0'};
+if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var dP         = __webpack_require__(65)
+  , createDesc = __webpack_require__(110);
+module.exports = __webpack_require__(63) ? function(object, key, value){
+  return dP.f(object, key, createDesc(1, value));
+} : function(object, key, value){
+  object[key] = value;
+  return object;
+};
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var store      = __webpack_require__(144)('wks')
+  , uid        = __webpack_require__(111)
+  , Symbol     = __webpack_require__(56).Symbol
+  , USE_SYMBOL = typeof Symbol == 'function';
+
+var $exports = module.exports = function(name){
+  return store[name] || (store[name] =
+    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+};
+
+$exports.store = store;
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 22.1.3.31 Array.prototype[@@unscopables]
+var UNSCOPABLES = __webpack_require__(14)('unscopables')
+  , ArrayProto  = Array.prototype;
+if(ArrayProto[UNSCOPABLES] == undefined)__webpack_require__(25)(ArrayProto, UNSCOPABLES, {});
+module.exports = function(key){
+  ArrayProto[UNSCOPABLES][key] = true;
+};
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var ctx         = __webpack_require__(52)
+  , call        = __webpack_require__(230)
+  , isArrayIter = __webpack_require__(156)
+  , anObject    = __webpack_require__(4)
+  , toLength    = __webpack_require__(18)
+  , getIterFn   = __webpack_require__(173)
+  , BREAK       = {}
+  , RETURN      = {};
+var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
+  var iterFn = ITERATOR ? function(){ return iterable; } : getIterFn(iterable)
+    , f      = ctx(fn, that, entries ? 2 : 1)
+    , index  = 0
+    , length, step, iterator, result;
+  if(typeof iterFn != 'function')throw TypeError(iterable + ' is not iterable!');
+  // fast case for arrays with default iterator
+  if(isArrayIter(iterFn))for(length = toLength(iterable.length); length > index; index++){
+    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
+    if(result === BREAK || result === RETURN)return result;
+  } else for(iterator = iterFn.call(iterable); !(step = iterator.next()).done; ){
+    result = call(iterator, f, step.value, entries);
+    if(result === BREAK || result === RETURN)return result;
+  }
+};
+exports.BREAK  = BREAK;
+exports.RETURN = RETURN;
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports) {
+
+module.exports = {};
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var def = __webpack_require__(17).f
+  , has = __webpack_require__(22)
+  , TAG = __webpack_require__(14)('toStringTag');
+
+module.exports = function(it, tag, stat){
+  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
+};
+
+/***/ }),
+/* 88 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $export = __webpack_require__(0)
+  , defined = __webpack_require__(40)
+  , fails   = __webpack_require__(9)
+  , spaces  = __webpack_require__(169)
+  , space   = '[' + spaces + ']'
+  , non     = '\u200b\u0085'
+  , ltrim   = RegExp('^' + space + space + '*')
+  , rtrim   = RegExp(space + space + '*$');
+
+var exporter = function(KEY, exec, ALIAS){
+  var exp   = {};
+  var FORCE = fails(function(){
+    return !!spaces[KEY]() || non[KEY]() != non;
+  });
+  var fn = exp[KEY] = FORCE ? exec(trim) : spaces[KEY];
+  if(ALIAS)exp[ALIAS] = fn;
+  $export($export.P + $export.F * FORCE, 'String', exp);
+};
+
+// 1 -> String#trimLeft
+// 2 -> String#trimRight
+// 3 -> String#trim
+var trim = exporter.trim = function(string, TYPE){
+  string = String(defined(string));
+  if(TYPE & 1)string = string.replace(ltrim, '');
+  if(TYPE & 2)string = string.replace(rtrim, '');
+  return string;
+};
+
+module.exports = exporter;
 
 /***/ }),
 /* 89 */
@@ -58471,9 +58471,9 @@ module.exports = function(it){
 /***/ (function(module, exports, __webpack_require__) {
 
 var global    = __webpack_require__(56)
-  , core      = __webpack_require__(80)
+  , core      = __webpack_require__(81)
   , ctx       = __webpack_require__(211)
-  , hide      = __webpack_require__(81)
+  , hide      = __webpack_require__(82)
   , PROTOTYPE = 'prototype';
 
 var $export = function(type, name, source){
@@ -59911,12 +59911,12 @@ var global            = __webpack_require__(6)
   , redefine          = __webpack_require__(26)
   , redefineAll       = __webpack_require__(72)
   , meta              = __webpack_require__(57)
-  , forOf             = __webpack_require__(84)
+  , forOf             = __webpack_require__(85)
   , anInstance        = __webpack_require__(67)
   , isObject          = __webpack_require__(12)
   , fails             = __webpack_require__(9)
   , $iterDetect       = __webpack_require__(118)
-  , setToStringTag    = __webpack_require__(86)
+  , setToStringTag    = __webpack_require__(87)
   , inheritIfRequired = __webpack_require__(155);
 
 module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
@@ -62778,7 +62778,7 @@ exports.f = {}.propertyIsEnumerable;
 
 var def = __webpack_require__(65).f
   , has = __webpack_require__(64)
-  , TAG = __webpack_require__(82)('toStringTag');
+  , TAG = __webpack_require__(83)('toStringTag');
 
 module.exports = function(it, tag, stat){
   if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
@@ -62838,7 +62838,7 @@ module.exports = function(it, S){
 /***/ (function(module, exports, __webpack_require__) {
 
 var global         = __webpack_require__(56)
-  , core           = __webpack_require__(80)
+  , core           = __webpack_require__(81)
   , LIBRARY        = __webpack_require__(139)
   , wksExt         = __webpack_require__(148)
   , defineProperty = __webpack_require__(65).f;
@@ -62851,7 +62851,7 @@ module.exports = function(name){
 /* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports.f = __webpack_require__(82);
+exports.f = __webpack_require__(83);
 
 /***/ }),
 /* 149 */
@@ -62950,7 +62950,7 @@ module.exports = function(that, target, C){
 /***/ (function(module, exports, __webpack_require__) {
 
 // check on default Array iterator
-var Iterators  = __webpack_require__(85)
+var Iterators  = __webpack_require__(86)
   , ITERATOR   = __webpack_require__(14)('iterator')
   , ArrayProto = Array.prototype;
 
@@ -62976,7 +62976,7 @@ module.exports = Array.isArray || function isArray(arg){
 
 var create         = __webpack_require__(69)
   , descriptor     = __webpack_require__(58)
-  , setToStringTag = __webpack_require__(86)
+  , setToStringTag = __webpack_require__(87)
   , IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
@@ -62998,9 +62998,9 @@ var LIBRARY        = __webpack_require__(68)
   , redefine       = __webpack_require__(26)
   , hide           = __webpack_require__(25)
   , has            = __webpack_require__(22)
-  , Iterators      = __webpack_require__(85)
+  , Iterators      = __webpack_require__(86)
   , $iterCreate    = __webpack_require__(158)
-  , setToStringTag = __webpack_require__(86)
+  , setToStringTag = __webpack_require__(87)
   , getPrototypeOf = __webpack_require__(36)
   , ITERATOR       = __webpack_require__(14)('iterator')
   , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
@@ -63372,7 +63372,7 @@ var global         = __webpack_require__(6)
   , gOPN           = __webpack_require__(70).f
   , dP             = __webpack_require__(17).f
   , arrayFill      = __webpack_require__(149)
-  , setToStringTag = __webpack_require__(86)
+  , setToStringTag = __webpack_require__(87)
   , ARRAY_BUFFER   = 'ArrayBuffer'
   , DATA_VIEW      = 'DataView'
   , PROTOTYPE      = 'prototype'
@@ -63652,7 +63652,7 @@ module.exports = function(name){
 
 var classof   = __webpack_require__(100)
   , ITERATOR  = __webpack_require__(14)('iterator')
-  , Iterators = __webpack_require__(85);
+  , Iterators = __webpack_require__(86);
 module.exports = __webpack_require__(43).getIteratorMethod = function(it){
   if(it != undefined)return it[ITERATOR]
     || it['@@iterator']
@@ -63665,9 +63665,9 @@ module.exports = __webpack_require__(43).getIteratorMethod = function(it){
 
 "use strict";
 
-var addToUnscopables = __webpack_require__(83)
+var addToUnscopables = __webpack_require__(84)
   , step             = __webpack_require__(231)
-  , Iterators        = __webpack_require__(85)
+  , Iterators        = __webpack_require__(86)
   , toIObject        = __webpack_require__(28);
 
 // 22.1.3.4 Array.prototype.entries()
@@ -75262,8 +75262,8 @@ PropertyBinding.findNode = function( root, nodeName ) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__KeyframeTrackPrototype__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackConstructor__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__KeyframeTrackPrototype__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackConstructor__ = __webpack_require__(78);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NumberKeyframeTrack; });
 
 
@@ -75306,9 +75306,9 @@ NumberKeyframeTrack.prototype =
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackPrototype__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackPrototype__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__math_interpolants_QuaternionLinearInterpolant__ = __webpack_require__(304);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__KeyframeTrackConstructor__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__KeyframeTrackConstructor__ = __webpack_require__(78);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return QuaternionKeyframeTrack; });
 
 
@@ -75361,8 +75361,8 @@ QuaternionKeyframeTrack.prototype =
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__KeyframeTrackPrototype__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackConstructor__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__KeyframeTrackPrototype__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackConstructor__ = __webpack_require__(78);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return VectorKeyframeTrack; });
 
 
@@ -79421,13 +79421,13 @@ module.exports = !__webpack_require__(63) && !__webpack_require__(108)(function(
 var LIBRARY        = __webpack_require__(139)
   , $export        = __webpack_require__(98)
   , redefine       = __webpack_require__(219)
-  , hide           = __webpack_require__(81)
+  , hide           = __webpack_require__(82)
   , has            = __webpack_require__(64)
   , Iterators      = __webpack_require__(138)
   , $iterCreate    = __webpack_require__(345)
   , setToStringTag = __webpack_require__(142)
   , getPrototypeOf = __webpack_require__(351)
-  , ITERATOR       = __webpack_require__(82)('iterator')
+  , ITERATOR       = __webpack_require__(83)('iterator')
   , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
   , FF_ITERATOR    = '@@iterator'
   , KEYS           = 'keys'
@@ -79553,7 +79553,7 @@ module.exports = function(object, names){
 /* 219 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(81);
+module.exports = __webpack_require__(82);
 
 /***/ }),
 /* 220 */
@@ -79601,7 +79601,7 @@ module.exports = [].copyWithin || function copyWithin(target/*= 0*/, start/*= 0,
 /* 222 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var forOf = __webpack_require__(84);
+var forOf = __webpack_require__(85);
 
 module.exports = function(iter, ITERATOR){
   var result = [];
@@ -79685,7 +79685,7 @@ var dP          = __webpack_require__(17).f
   , ctx         = __webpack_require__(52)
   , anInstance  = __webpack_require__(67)
   , defined     = __webpack_require__(40)
-  , forOf       = __webpack_require__(84)
+  , forOf       = __webpack_require__(85)
   , $iterDefine = __webpack_require__(159)
   , step        = __webpack_require__(231)
   , setSpecies  = __webpack_require__(73)
@@ -79846,7 +79846,7 @@ var redefineAll       = __webpack_require__(72)
   , anObject          = __webpack_require__(4)
   , isObject          = __webpack_require__(12)
   , anInstance        = __webpack_require__(67)
-  , forOf             = __webpack_require__(84)
+  , forOf             = __webpack_require__(85)
   , createArrayMethod = __webpack_require__(42)
   , $has              = __webpack_require__(22)
   , arrayFind         = createArrayMethod(5)
@@ -80122,7 +80122,7 @@ module.exports = Reflect && Reflect.ownKeys || function ownKeys(it){
 /***/ (function(module, exports, __webpack_require__) {
 
 var $parseFloat = __webpack_require__(6).parseFloat
-  , $trim       = __webpack_require__(87).trim;
+  , $trim       = __webpack_require__(88).trim;
 
 module.exports = 1 / $parseFloat(__webpack_require__(169) + '-0') !== -Infinity ? function parseFloat(str){
   var string = $trim(String(str), 3)
@@ -80135,7 +80135,7 @@ module.exports = 1 / $parseFloat(__webpack_require__(169) + '-0') !== -Infinity 
 /***/ (function(module, exports, __webpack_require__) {
 
 var $parseInt = __webpack_require__(6).parseInt
-  , $trim     = __webpack_require__(87).trim
+  , $trim     = __webpack_require__(88).trim
   , ws        = __webpack_require__(169)
   , hex       = /^[\-+]?0[xX]/;
 
@@ -89183,7 +89183,7 @@ exports.default = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__KeyframeTrackPrototype__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__KeyframeTrackPrototype__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tracks_StringKeyframeTrack__ = __webpack_require__(261);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tracks_BooleanKeyframeTrack__ = __webpack_require__(259);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tracks_QuaternionKeyframeTrack__ = __webpack_require__(181);
@@ -89191,7 +89191,7 @@ exports.default = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__tracks_VectorKeyframeTrack__ = __webpack_require__(182);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__tracks_NumberKeyframeTrack__ = __webpack_require__(180);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__AnimationUtils__ = __webpack_require__(103);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__KeyframeTrackConstructor__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__KeyframeTrackConstructor__ = __webpack_require__(78);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return KeyframeTrack; });
 
 
@@ -89578,8 +89578,8 @@ PropertyMixer.prototype = {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackPrototype__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__KeyframeTrackConstructor__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackPrototype__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__KeyframeTrackConstructor__ = __webpack_require__(78);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return BooleanKeyframeTrack; });
 
 
@@ -89629,8 +89629,8 @@ BooleanKeyframeTrack.prototype =
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__KeyframeTrackPrototype__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackConstructor__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__KeyframeTrackPrototype__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackConstructor__ = __webpack_require__(78);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ColorKeyframeTrack; });
 
 
@@ -89678,8 +89678,8 @@ ColorKeyframeTrack.prototype =
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackPrototype__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__KeyframeTrackConstructor__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__KeyframeTrackPrototype__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__KeyframeTrackConstructor__ = __webpack_require__(78);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StringKeyframeTrack; });
 
 
@@ -93772,7 +93772,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "MeshLambertMaterial", function() { return __WEBPACK_IMPORTED_MODULE_11__MeshLambertMaterial_js__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__MeshDepthMaterial_js__ = __webpack_require__(296);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "MeshDepthMaterial", function() { return __WEBPACK_IMPORTED_MODULE_12__MeshDepthMaterial_js__["a"]; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__MeshBasicMaterial_js__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__MeshBasicMaterial_js__ = __webpack_require__(80);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "MeshBasicMaterial", function() { return __WEBPACK_IMPORTED_MODULE_13__MeshBasicMaterial_js__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__LineDashedMaterial_js__ = __webpack_require__(744);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "LineDashedMaterial", function() { return __WEBPACK_IMPORTED_MODULE_14__LineDashedMaterial_js__["a"]; });
@@ -95602,7 +95602,7 @@ WebGLRenderTargetCube.prototype.isWebGLRenderTargetCube = true;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__objects_Mesh__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__geometries_BoxGeometry__ = __webpack_require__(190);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__geometries_PlaneGeometry__ = __webpack_require__(276);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__materials_MeshBasicMaterial__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__materials_MeshBasicMaterial__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__cameras_PerspectiveCamera__ = __webpack_require__(60);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__cameras_OrthographicCamera__ = __webpack_require__(126);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__webgl_WebGLIndexedBufferRenderer__ = __webpack_require__(760);
@@ -98511,7 +98511,7 @@ function WebGLRenderer( parameters ) {
 
 
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(88)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(77)))
 
 /***/ }),
 /* 310 */
@@ -99865,9 +99865,9 @@ var imageBase = __webpack_require__(318);
 var imageNormal = __webpack_require__(317);
 __webpack_require__(692);
 
-var Elektro = function () {
-  function Elektro() {
-    _classCallCheck(this, Elektro);
+var App = function () {
+  function App() {
+    _classCallCheck(this, App);
 
     this.state = {
       audio: {}
@@ -99906,7 +99906,7 @@ var Elektro = function () {
     this.removeIntro();
   }
 
-  _createClass(Elektro, [{
+  _createClass(App, [{
     key: 'setInfoText',
     value: function setInfoText() {
 
@@ -99985,13 +99985,13 @@ var Elektro = function () {
     }
   }]);
 
-  return Elektro;
+  return App;
 }();
 
-exports.default = Elektro;
+exports.default = App;
 
 
-var app = new Elektro();
+var app = new App();
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(175)))
 
 /***/ }),
@@ -100045,7 +100045,6 @@ var Canvas = function () {
     this.renderer = new _Three.WebGLRenderer({ antialising: true, alpha: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(width, height);
-    // this.renderer.setClearColor(0x000000)
     this.camera = new _Three.PerspectiveCamera(75, width / height, 1, 10000);
     this.camera.position.x = 0;
     this.camera.position.y = 0;
@@ -100120,20 +100119,6 @@ var Canvas = function () {
       var _this = this;
 
       var self = this;
-
-      // document.addEventListener('keydown', (event) => {
-      //   const keyName = event.key;
-      //
-      // }, false);
-      // document.addEventListener('keyup', (event) => {
-      //   const keyName = event.key;
-      //   if(event.code == 'Space'){
-      //     if(settings.pressingSource < 1.5){
-      //       settings.pressingSource += .01
-      //       // TweenMax.to(settings,.1,{ pressing : '+=.01'})
-      //     }
-      //   }
-      // }, false);
 
       var cameraPanRange = 1.0,
           cameraYawRange = cameraPanRange * 1.125;
@@ -100261,14 +100246,14 @@ var Canvas = function () {
 }();
 
 exports.default = Canvas;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(175), __webpack_require__(88)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(175), __webpack_require__(77)))
 
 /***/ }),
 /* 321 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(THREE) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -100276,7 +100261,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _three = __webpack_require__(88);
+var _three = __webpack_require__(77);
 
 var _settings = __webpack_require__(95);
 
@@ -100335,11 +100320,14 @@ var ParticleSystem = function (_Object3D) {
     _this.geom.addAttribute('alpha', new _three.BufferAttribute(_this.alpha, 1));
     _this.geom.computeBoundingSphere();
 
+    _settings2.default.textures.particle = new _three.TextureLoader().load(particleImage);
+    _settings2.default.textures.particle.minFilter = THREE.LinearFilter;
+
     _this.mat = new _three.ShaderMaterial({
       vertexShader: vert,
       fragmentShader: frag,
       uniforms: {
-        'texture': { type: 't', value: new _three.TextureLoader().load(particleImage) },
+        'texture': { type: 't', value: _settings2.default.textures.particle },
         'color': { type: 'c', value: new _three.Color(0xd200ff) }
       },
       transparent: true,
@@ -100364,20 +100352,8 @@ var ParticleSystem = function (_Object3D) {
   }, {
     key: 'update',
     value: function update(state) {
-      // if(settings.explodeStart){
-      //   this.explode()
-      // }else{
-      //   this.sparks()
-      // }
-      //
       if (_settings2.default.explodeStart) {
-        // this.timelineText.play()
         this.timelineExplode.play();
-
-        if (_settings2.default.audio.deltaTween > _settings2.default.explode.limit) {} else {
-          // this.timelineExplode.reverse()
-
-        }
       } else {
         this.timelineExplode.reverse();
       }
@@ -100461,6 +100437,7 @@ var ParticleSystem = function (_Object3D) {
 }(_three.Object3D);
 
 exports.default = ParticleSystem;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(77)))
 
 /***/ }),
 /* 322 */
@@ -100475,7 +100452,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _three = __webpack_require__(88);
+var _three = __webpack_require__(77);
 
 var _settings = __webpack_require__(95);
 
@@ -100568,7 +100545,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _three = __webpack_require__(88);
+var _three = __webpack_require__(77);
 
 var _settings = __webpack_require__(95);
 
@@ -100638,6 +100615,10 @@ var MeshDeformed = function (_Object3D) {
       vertexShader: self.options.vertex,
       fragmentShader: self.options.fragment
     });
+
+    // settings.textures.base.minFilter = THREE.LinearFilter
+    // settings.textures.normal.minFilter = THREE.LinearFilter
+
     _this.material.uniforms.texture.value = _settings2.default.textures.base;
     _this.material.uniforms.tNormal.value = _settings2.default.textures.normal;
 
@@ -101356,7 +101337,7 @@ module.exports = __webpack_require__(43).RegExp.escape;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(358);
-var $Object = __webpack_require__(80).Object;
+var $Object = __webpack_require__(81).Object;
 module.exports = function create(P, D){
   return $Object.create(P, D);
 };
@@ -101366,7 +101347,7 @@ module.exports = function create(P, D){
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(359);
-var $Object = __webpack_require__(80).Object;
+var $Object = __webpack_require__(81).Object;
 module.exports = function defineProperty(it, key, desc){
   return $Object.defineProperty(it, key, desc);
 };
@@ -101376,7 +101357,7 @@ module.exports = function defineProperty(it, key, desc){
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(360);
-module.exports = __webpack_require__(80).Object.setPrototypeOf;
+module.exports = __webpack_require__(81).Object.setPrototypeOf;
 
 /***/ }),
 /* 336 */
@@ -101386,7 +101367,7 @@ __webpack_require__(363);
 __webpack_require__(361);
 __webpack_require__(364);
 __webpack_require__(365);
-module.exports = __webpack_require__(80).Symbol;
+module.exports = __webpack_require__(81).Symbol;
 
 /***/ }),
 /* 337 */
@@ -101495,7 +101476,7 @@ var create         = __webpack_require__(140)
   , IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-__webpack_require__(81)(IteratorPrototype, __webpack_require__(82)('iterator'), function(){ return this; });
+__webpack_require__(82)(IteratorPrototype, __webpack_require__(83)('iterator'), function(){ return this; });
 
 module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
@@ -101839,7 +101820,7 @@ var global         = __webpack_require__(56)
   , shared         = __webpack_require__(144)
   , setToStringTag = __webpack_require__(142)
   , uid            = __webpack_require__(111)
-  , wks            = __webpack_require__(82)
+  , wks            = __webpack_require__(83)
   , wksExt         = __webpack_require__(148)
   , wksDefine      = __webpack_require__(147)
   , keyOf          = __webpack_require__(347)
@@ -102055,7 +102036,7 @@ $JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function(){
 });
 
 // 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
-$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(81)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(82)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
 // 19.4.3.5 Symbol.prototype[@@toStringTag]
 setToStringTag($Symbol, 'Symbol');
 // 20.2.1.9 Math[@@toStringTag]
@@ -102081,9 +102062,9 @@ __webpack_require__(147)('observable');
 
 __webpack_require__(357);
 var global        = __webpack_require__(56)
-  , hide          = __webpack_require__(81)
+  , hide          = __webpack_require__(82)
   , Iterators     = __webpack_require__(138)
-  , TO_STRING_TAG = __webpack_require__(82)('toStringTag');
+  , TO_STRING_TAG = __webpack_require__(83)('toStringTag');
 
 for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
   var NAME       = collections[i]
@@ -102243,7 +102224,7 @@ var $export = __webpack_require__(0);
 
 $export($export.P, 'Array', {copyWithin: __webpack_require__(221)});
 
-__webpack_require__(83)('copyWithin');
+__webpack_require__(84)('copyWithin');
 
 /***/ }),
 /* 377 */
@@ -102270,7 +102251,7 @@ var $export = __webpack_require__(0);
 
 $export($export.P, 'Array', {fill: __webpack_require__(149)});
 
-__webpack_require__(83)('fill');
+__webpack_require__(84)('fill');
 
 /***/ }),
 /* 379 */
@@ -102306,7 +102287,7 @@ $export($export.P + $export.F * forced, 'Array', {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
-__webpack_require__(83)(KEY);
+__webpack_require__(84)(KEY);
 
 /***/ }),
 /* 381 */
@@ -102326,7 +102307,7 @@ $export($export.P + $export.F * forced, 'Array', {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
-__webpack_require__(83)(KEY);
+__webpack_require__(84)(KEY);
 
 /***/ }),
 /* 382 */
@@ -103065,7 +103046,7 @@ var global            = __webpack_require__(6)
   , gOPN              = __webpack_require__(70).f
   , gOPD              = __webpack_require__(35).f
   , dP                = __webpack_require__(17).f
-  , $trim             = __webpack_require__(87).trim
+  , $trim             = __webpack_require__(88).trim
   , NUMBER            = 'Number'
   , $Number           = global[NUMBER]
   , Base              = $Number
@@ -103584,7 +103565,7 @@ var LIBRARY            = __webpack_require__(68)
   , isObject           = __webpack_require__(12)
   , aFunction          = __webpack_require__(24)
   , anInstance         = __webpack_require__(67)
-  , forOf              = __webpack_require__(84)
+  , forOf              = __webpack_require__(85)
   , speciesConstructor = __webpack_require__(165)
   , task               = __webpack_require__(170).set
   , microtask          = __webpack_require__(162)()
@@ -103805,7 +103786,7 @@ if(!USE_NATIVE){
 }
 
 $export($export.G + $export.W + $export.F * !USE_NATIVE, {Promise: $Promise});
-__webpack_require__(86)($Promise, PROMISE);
+__webpack_require__(87)($Promise, PROMISE);
 __webpack_require__(73)(PROMISE);
 Wrapper = __webpack_require__(43)[PROMISE];
 
@@ -104739,7 +104720,7 @@ __webpack_require__(27)('sup', function(createHTML){
 "use strict";
 
 // 21.1.3.25 String.prototype.trim()
-__webpack_require__(87)('trim', function($trim){
+__webpack_require__(88)('trim', function($trim){
   return function trim(){
     return $trim(this, 3);
   };
@@ -104760,7 +104741,7 @@ var global         = __webpack_require__(6)
   , META           = __webpack_require__(57).KEY
   , $fails         = __webpack_require__(9)
   , shared         = __webpack_require__(121)
-  , setToStringTag = __webpack_require__(86)
+  , setToStringTag = __webpack_require__(87)
   , uid            = __webpack_require__(75)
   , wks            = __webpack_require__(14)
   , wksExt         = __webpack_require__(243)
@@ -105171,7 +105152,7 @@ $export($export.P, 'Array', {
   }
 });
 
-__webpack_require__(83)('includes');
+__webpack_require__(84)('includes');
 
 /***/ }),
 /* 508 */
@@ -105440,7 +105421,7 @@ var $export     = __webpack_require__(0)
   , anInstance  = __webpack_require__(67)
   , redefineAll = __webpack_require__(72)
   , hide        = __webpack_require__(25)
-  , forOf       = __webpack_require__(84)
+  , forOf       = __webpack_require__(85)
   , RETURN      = forOf.RETURN;
 
 var getMethod = function(fn){
@@ -105889,7 +105870,7 @@ $export($export.P, 'String', {
 "use strict";
 
 // https://github.com/sebmarkbage/ecmascript-string-left-right-trim
-__webpack_require__(87)('trimLeft', function($trim){
+__webpack_require__(88)('trimLeft', function($trim){
   return function trimLeft(){
     return $trim(this, 1);
   };
@@ -105902,7 +105883,7 @@ __webpack_require__(87)('trimLeft', function($trim){
 "use strict";
 
 // https://github.com/sebmarkbage/ecmascript-string-left-right-trim
-__webpack_require__(87)('trimRight', function($trim){
+__webpack_require__(88)('trimRight', function($trim){
   return function trimRight(){
     return $trim(this, 2);
   };
@@ -105937,7 +105918,7 @@ var $iterators    = __webpack_require__(174)
   , redefine      = __webpack_require__(26)
   , global        = __webpack_require__(6)
   , hide          = __webpack_require__(25)
-  , Iterators     = __webpack_require__(85)
+  , Iterators     = __webpack_require__(86)
   , wks           = __webpack_require__(14)
   , ITERATOR      = wks('iterator')
   , TO_STRING_TAG = wks('toStringTag')
@@ -107904,13 +107885,13 @@ module.exports = "#define GLSLIFY 1\n#include <shadowmap_pars_vertex>\n\nvoid ma
 /* 659 */
 /***/ (function(module, exports) {
 
-module.exports = "precision highp float;\n#define GLSLIFY 1\nattribute vec4 tangent;\n\nvarying vec3 fNormal;\nvarying vec3 fPosition;\nvarying vec2 vUv;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec3 vNormal;\nvarying vec3 vU;\nvarying vec2 vN;\nvarying vec3 vEye;\n\nvarying vec4 vPosition;\nvarying vec4 vOPosition;\nvarying vec3 vONormal;\n\nvoid main()\n{\n    vN = vec2( 0. );\n    vUv = uv;\n    \n    \n    vOPosition = modelViewMatrix * vec4( position, 1.0 );\n    gl_Position = projectionMatrix * vOPosition;\n    \n    vU = normalize( vec3( modelViewMatrix * vec4( position, 1.0 ) ) );\n    \n    vPosition = vec4( position, 1.0 );\n    vNormal = normalMatrix * normal;\n    vONormal = normal;\n    \n    \n    vTangent = normalize( normalMatrix * tangent.xyz );\n    vBinormal = normalize( cross( vNormal, vTangent ) * tangent.w );\n    fNormal = normalize(normalMatrix * normal);\n    \n    vec4 pos = modelViewMatrix * vec4(position, 1.0);\n    fPosition = pos.xyz;\n    gl_Position = projectionMatrix * pos;\n    \n}"
+module.exports = "precision highp float;\n#define GLSLIFY 1\nattribute vec4 tangent;\n\nvarying vec3 fNormal;\nvarying vec3 fPosition;\nvarying vec2 vUv;\nvarying vec3 vNormal;\nvarying vec3 vU;\n\nvarying vec4 vPosition;\nvarying vec3 vONormal;\n\nvoid main()\n{\n    vec2 vN = vec2( 0. );\n    vUv = uv;\n\n    vec4 vOPosition = modelViewMatrix * vec4( position, 1.0 );\n    gl_Position = projectionMatrix * vOPosition;\n\n    vU = normalize( vec3( modelViewMatrix * vec4( position, 1.0 ) ) );\n\n    vPosition = vec4( position, 1.0 );\n    vNormal = normalMatrix * normal;\n    vONormal = normal;\n\n    fNormal = normalize(normalMatrix * normal);\n\n    vec4 pos = modelViewMatrix * vec4(position, 1.0);\n    fPosition = pos.xyz;\n    gl_Position = projectionMatrix * pos;\n\n}\n"
 
 /***/ }),
 /* 660 */
 /***/ (function(module, exports) {
 
-module.exports = "\n\nprecision highp float;\n#define GLSLIFY 1\nuniform float time;\nuniform vec2 resolution;\nuniform sampler2D textureVideo;\nuniform sampler2D texture;\nuniform sampler2D tNormal;\n\nuniform float noise_value;\n\nuniform vec3 lightDir_value;\nuniform vec3 viewDir_value;\nuniform float exponent_value;\nuniform float fresnelCoef_value;\n//uniform float exposition_value;\n\nuniform vec3 rim_color;\nuniform float rim_start;\nuniform float rim_end;\nuniform float rim_coef;\n\nuniform float normalScale;\nuniform float texScale;\nuniform float normalCoef;\n\nvarying vec3 fPosition;\nvarying vec3 fNormal;\n\nvarying vec2 vUv;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec3 vNormal;\nvarying vec3 vU;\nvarying vec2 vN;\n\nvarying vec4 vPosition;\nvarying vec4 vOPosition;\nvarying vec3 vONormal;\nvarying vec3 vEye;\n\nfloat random(vec3 scale,float seed)\n{return fract(sin(dot(gl_FragCoord.xyz+seed,scale))*43758.5453+seed);}\n\nvec3 rim(vec3 rim_color,float start, float end,float coef)\n{\n\t//http://roxlu.com/2014/037/opengl-rim-shader\n\t vec3 n = normalize(fNormal);      // convert normal to view space, u_vm (view matrix), is a rigid body transform.\n  vec3 p = vec3(fPosition);                   // position in view space\n  vec3 v = normalize(-p);                       // eye vector\n  float vdn = coef - max(dot(v, n), 0.0);        // the rim contribution\n  return vec3(smoothstep(start, end, vdn))*(rim_color/vec3(255,255,255));\n\n}\n\nfloat fresnel(float costheta, float fresnelCoef)\n{\n    return fresnelCoef + (1. - fresnelCoef) * pow(1. - costheta, 5.);\n}\n\n//http://sunandblackcat.com/tipFullView.php?l=eng&topicid=30&topic=Phong-Lighting\n\nvec2 normal_map(float normalScale,float normalCoef,float texScale)\n{\n    //www.clicktorelease.com/code/bumpy-metaballs/\n\n    vec3 n = normalize( vONormal.xyz );\n    vec3 blend_weights = abs( n );\n    blend_weights = ( blend_weights - 0.2 ) * 7.;\n    blend_weights = max( blend_weights, 0. );\n    blend_weights /= ( blend_weights.x + blend_weights.y + blend_weights.z );\n\n    vec2 coord1 = vPosition.yz * texScale;\n    vec2 coord2 = vPosition.zx * texScale;\n    vec2 coord3 = vPosition.xy * texScale;\n\n    vec3 bump1 = texture2D( tNormal, coord1 ).rgb;\n    vec3 bump2 = texture2D( tNormal, coord2 ).rgb;\n    vec3 bump3 = texture2D( tNormal, coord3 ).rgb;\n\n    vec3 blended_bump = bump1 * blend_weights.xxx +\n    bump2 * blend_weights.yyy +\n    bump3 * blend_weights.zzz;\n\n    vec3 tanX = vec3( vNormal.x, -vNormal.z, vNormal.y);\n    vec3 tanY = vec3( vNormal.z, vNormal.y, -vNormal.x);\n    vec3 tanZ = vec3(-vNormal.y, vNormal.x, vNormal.z);\n    vec3 blended_tangent = tanX * blend_weights.xxx +\n    tanY * blend_weights.yyy +\n    tanZ * blend_weights.zzz;\n\n    // vec3 normalTex = blended_bump * 2.0 - 1.0;\n    vec3 normalTex = texture2D( tNormal, vUv  ).xyz * 2.0 - 1.0;\n    normalTex.xy *= normalScale;\n    // normalTex.y *= -1.;\n    normalTex = normalize( normalTex );\n    mat3 tsb = mat3( normalize( blended_tangent ), normalize( cross( vNormal, blended_tangent ) ), normalize( vNormal ) );\n    vec3 finalNormal = tsb * normalTex;\n\n    vec3 r = reflect( normalize( vU ), normalize( finalNormal ) );\n    float m = normalCoef * sqrt( r.x * r.x + r.y * r.y + ( r.z + 1.0 ) * ( r.z + 1.0 ) );\n    vec2 calculatedNormal = vec2( r.x / m + 0.5,  r.y / m + 0.5 );\n\n    return calculatedNormal;\n}\n\nvec3 lighterColorSmooth( vec3 source, vec3 destination )\n{\n  float sourceSum = source.r + source.g + source.b;\n\tfloat destinationSum = destination.r + destination.g + destination.b;\n\tfloat mixValue = sourceSum - destinationSum;\n\treturn mix(destination,source,smoothstep(.0,1.,mixValue));\n}\n\nvoid main()\n{\n    float noise = noise_value;\n    vec2 position = vUv;\n    vec3 color = texture2D( texture,  normal_map(normalScale,normalCoef, texScale) ).rgb;\n\n\t\tcolor += fresnel(dot(fNormal,lightDir_value), fresnelCoef_value)*exponent_value;\n    color += rim(rim_color,rim_start, rim_end,rim_coef);\n    color += noise * ( .5 - random( vec3( 1. ), length( gl_FragCoord ) ) );\n\t\t//color += mix(color, vNormal, 0.5);\n//\tvec3 t = texture2D(textureVideo,position).rgb;\n//\t\tcolor += mix(color,t,0.4);\n\n    gl_FragColor = vec4(lighterColorSmooth(color,vec3(0.063,0.063,0.063)), 1.0);\n}\n"
+module.exports = "\n\nprecision highp float;\n#define GLSLIFY 1\nuniform float time;\nuniform vec2 resolution;\nuniform sampler2D textureVideo;\nuniform sampler2D texture;\nuniform sampler2D tNormal;\n\nuniform float noise_value;\n\nuniform vec3 lightDir_value;\nuniform vec3 viewDir_value;\nuniform float exponent_value;\nuniform float fresnelCoef_value;\n//uniform float exposition_value;\n\nuniform vec3 rim_color;\nuniform float rim_start;\nuniform float rim_end;\nuniform float rim_coef;\n\nuniform float normalScale;\nuniform float texScale;\nuniform float normalCoef;\n\nvarying vec3 fPosition;\nvarying vec3 fNormal;\n\nvarying vec2 vUv;\nvarying vec3 vNormal;\nvarying vec3 vU;\n\nvarying vec4 vPosition;\nvarying vec3 vONormal;\n\nfloat random(vec3 scale,float seed)\n{return fract(sin(dot(gl_FragCoord.xyz+seed,scale))*43758.5453+seed);}\n\nvec3 rim(vec3 rim_color,float start, float end,float coef)\n{\n\t//http://roxlu.com/2014/037/opengl-rim-shader\n\t vec3 n = normalize(fNormal);      // convert normal to view space, u_vm (view matrix), is a rigid body transform.\n  vec3 p = vec3(fPosition);                   // position in view space\n  vec3 v = normalize(-p);                       // eye vector\n  float vdn = coef - max(dot(v, n), 0.0);        // the rim contribution\n  return vec3(smoothstep(start, end, vdn))*(rim_color/vec3(255,255,255));\n\n}\n\nfloat fresnel(float costheta, float fresnelCoef)\n{\n    return fresnelCoef + (1. - fresnelCoef) * pow(1. - costheta, 5.);\n}\n\n//http://sunandblackcat.com/tipFullView.php?l=eng&topicid=30&topic=Phong-Lighting\n\nvec2 normal_map(float normalScale,float normalCoef,float texScale)\n{\n    //www.clicktorelease.com/code/bumpy-metaballs/\n\n    vec3 n = normalize( vONormal.xyz );\n    vec3 blend_weights = abs( n );\n    blend_weights = ( blend_weights - 0.2 ) * 7.;\n    blend_weights = max( blend_weights, 0. );\n    blend_weights /= ( blend_weights.x + blend_weights.y + blend_weights.z );\n\n    vec2 coord1 = vPosition.yz * texScale;\n    vec2 coord2 = vPosition.zx * texScale;\n    vec2 coord3 = vPosition.xy * texScale;\n\n    vec3 bump1 = texture2D( tNormal, coord1 ).rgb;\n    vec3 bump2 = texture2D( tNormal, coord2 ).rgb;\n    vec3 bump3 = texture2D( tNormal, coord3 ).rgb;\n\n    vec3 blended_bump = bump1 * blend_weights.xxx +\n    bump2 * blend_weights.yyy +\n    bump3 * blend_weights.zzz;\n\n    vec3 tanX = vec3( vNormal.x, -vNormal.z, vNormal.y);\n    vec3 tanY = vec3( vNormal.z, vNormal.y, -vNormal.x);\n    vec3 tanZ = vec3(-vNormal.y, vNormal.x, vNormal.z);\n    vec3 blended_tangent = tanX * blend_weights.xxx +\n    tanY * blend_weights.yyy +\n    tanZ * blend_weights.zzz;\n\n    // vec3 normalTex = blended_bump * 2.0 - 1.0;\n    vec3 normalTex = texture2D( tNormal, vUv  ).xyz * 2.0 - 1.0;\n    normalTex.xy *= normalScale;\n    // normalTex.y *= -1.;\n    normalTex = normalize( normalTex );\n    mat3 tsb = mat3( normalize( blended_tangent ), normalize( cross( vNormal, blended_tangent ) ), normalize( vNormal ) );\n    vec3 finalNormal = tsb * normalTex;\n\n    vec3 r = reflect( normalize( vU ), normalize( finalNormal ) );\n    float m = normalCoef * sqrt( r.x * r.x + r.y * r.y + ( r.z + 1.0 ) * ( r.z + 1.0 ) );\n    vec2 calculatedNormal = vec2( r.x / m + 0.5,  r.y / m + 0.5 );\n\n    return calculatedNormal;\n}\n\nvec3 lighterColorSmooth( vec3 source, vec3 destination )\n{\n  float sourceSum = source.r + source.g + source.b;\n\tfloat destinationSum = destination.r + destination.g + destination.b;\n\tfloat mixValue = sourceSum - destinationSum;\n\treturn mix(destination,source,smoothstep(.0,1.,mixValue));\n}\n\nvoid main()\n{\n    float noise = noise_value;\n    vec2 position = vUv;\n    vec3 color = texture2D( texture,  normal_map(normalScale,normalCoef, texScale) ).rgb;\n\n\t\tcolor += fresnel(dot(fNormal,lightDir_value), fresnelCoef_value)*exponent_value;\n    color += rim(rim_color,rim_start, rim_end,rim_coef);\n    color += noise * ( .5 - random( vec3( 1. ), length( gl_FragCoord ) ) );\n\t\t//color += mix(color, vNormal, 0.5);\n//\tvec3 t = texture2D(textureVideo,position).rgb;\n//\t\tcolor += mix(color,t,0.4);\n\n    gl_FragColor = vec4(lighterColorSmooth(color,vec3(0.063,0.063,0.063)), 1.0);\n}\n"
 
 /***/ }),
 /* 661 */
@@ -120418,7 +120399,7 @@ TubeBufferGeometry.prototype.constructor = TubeBufferGeometry;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_BufferGeometry__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__core_Object3D__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__geometries_CylinderGeometry__ = __webpack_require__(128);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__materials_MeshBasicMaterial__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__materials_MeshBasicMaterial__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__materials_LineBasicMaterial__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__objects_Mesh__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__objects_Line__ = __webpack_require__(107);
@@ -121075,7 +121056,7 @@ FaceNormalsHelper.prototype.update = ( function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__core_Object3D__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__objects_Mesh__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__constants__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__materials_MeshBasicMaterial__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__materials_MeshBasicMaterial__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__geometries_OctahedronGeometry__ = __webpack_require__(275);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__core_BufferAttribute__ = __webpack_require__(5);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HemisphereLightHelper; });
@@ -121172,7 +121153,7 @@ HemisphereLightHelper.prototype.update = function () {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__objects_Mesh__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__materials_MeshBasicMaterial__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__materials_MeshBasicMaterial__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__geometries_SphereGeometry__ = __webpack_require__(278);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PointLightHelper; });
 
@@ -121374,7 +121355,7 @@ PolarGridHelper.prototype.constructor = PolarGridHelper;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_Object3D__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__math_Vector3__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__objects_Mesh__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__materials_MeshBasicMaterial__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__materials_MeshBasicMaterial__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__core_BufferGeometry__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__core_BufferAttribute__ = __webpack_require__(5);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return RectAreaLightHelper; });

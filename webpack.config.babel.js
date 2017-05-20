@@ -22,7 +22,7 @@ export default {
   output: {
     filename: 'js/bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: process.env.NODE_ENV === 'production' ? './dist/' : `http://localhost:${WDS_PORT}/dist/`,
+    publicPath: process.env.NODE_ENV === 'production' ? './dist/' : `./dist/`,
   },
   plugins: [
     new DashboardPlugin(),
