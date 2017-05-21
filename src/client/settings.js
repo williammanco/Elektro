@@ -13,6 +13,10 @@ export default {
   force : .004,
   level: 0,
   levelUpper : false,
+  cameraTilt: {
+    cameraPanRange: 1.0,
+    cameraYawRange: 1.0 * 1.125
+  },
   mouse : {
     x:0,
     y:0
