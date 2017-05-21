@@ -80,22 +80,36 @@ export default class Canvas {
 
     let cameraPanRange = 1.0, cameraYawRange = cameraPanRange * 1.125
 
-    $(window).on('mousemove touchmove', (e) => {
-        const nx = e.clientX / window.innerWidth * 2 - 1
-        const ny = -e.clientY / window.innerHeight * 2 + 1
-        const ry = -THREE.Math.mapLinear(nx, -1, 1, cameraPanRange * -0.5, cameraPanRange * 0.5)
-        const rx = THREE.Math.mapLinear(ny, -1, 1, cameraYawRange * -0.5, cameraYawRange * 0.5)
-
-        TweenMax.to(this.camera.rotation, 2, {
-          x: rx,
-          y: ry,
-          ease: Power4.easeOut,
-        })
-      })
+    $(window).on('mousemove', (e) => {
+      self.cameraTilt(e.pageX,e.pageY,'mousemove')
+    })
+    $(window).on('deviceorientation', function (e) {
+      self.cameraTilt(e.originalEvent.beta,e.originalEvent.gamma)
+    })
 
     $(window).on('app.levelUpper', function(){
       self.setText()
       self.setTimelineLevelUpper()
+    })
+  }
+
+  cameraTilt(x, y, type){
+    const cameraPanRange = settings.cameraTilt.cameraPanRange
+    const cameraYawRange = settings.cameraTilt.cameraYawRange
+    let nx,ny,ry,rx
+    if(type == 'mousemove'){
+      nx = x / window.innerWidth * 2 - 1
+      ny = -y / window.innerHeight * 2 + 1
+      ry = -Math.mapLinear(nx, -1, 1, cameraPanRange * -0.5, cameraPanRange * 0.5)
+      rx = Math.mapLinear(ny, -1, 1, cameraYawRange * -0.5, cameraYawRange * 0.5)
+    }else{
+      rx = x * 0.01
+      ry = y * 0.03
+    }
+    TweenMax.to(this.camera.rotation, 2, {
+      x: rx,
+      y: ry,
+      ease: Power4.easeOut
     })
   }
 

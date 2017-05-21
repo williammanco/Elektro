@@ -12,11 +12,13 @@ import 'sono/effects';
 import 'sono/utils'
 import 'blast-text'
 
+const impact = require('./assets/mp3/impact.mp3')
 const base = require('./assets/mp3/sound.mp3')
 const kick = require('./assets/mp3/kick.mp3')
 const meter = new DecibelMeter('unique-id')
 const imageBase = require('./assets/img/matblender.png')
 const imageNormal = require('./assets/img/fresh_snow-normal.jpg')
+
 require('./assets/sass/main.sass')
 
 export default class App {
@@ -43,7 +45,7 @@ export default class App {
     this.squareWave = sono.create('square')
     this.squareWave.volume = 0
     this.squareWave.frequency = 10
-    this.squareWave.effects = [ sono.reverb(), sono.echo()]
+    this.squareWave.effects = [ sono.reverb(), sono.echo(), sono.flanger()]
     this.base = sono.create({
     	id: 'base',
     	url: [base],
@@ -51,6 +53,8 @@ export default class App {
     	volume: 1.5
     })
     this.kick = sono.create(kick)
+    this.kick.volume = .5
+    this.impact = sono.create(impact)
     this.base.play()
     this.squareWave.play()
     this.events()
@@ -134,6 +138,7 @@ export default class App {
 
     $(window).on('app.levelUpper', function(){
       self.kick.play()
+      self.impact.play()
       $('#current-level').html(settings.level)
     })
 
@@ -146,8 +151,13 @@ export default class App {
 
   update() {
     if(this.squareWave){
-      this.squareWave.frequency = 10+settings.pressing*10
-      this.squareWave.volume = settings.pressing*0.3
+      if(!settings.levelUpper){
+        this.squareWave.frequency = 10+settings.pressing*50
+        this.squareWave.volume = settings.pressing*0.4
+      }else{
+        this.squareWave.volume -= .2
+      }
+
     }
     this.canvas.update(this.state)
     this.canvas.render()
