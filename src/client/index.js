@@ -24,7 +24,7 @@ export default class App {
     this.state = {
       audio : {}
     }
-
+    console.log('%c |||| ', 'background: #222; color: #fff; padding: 10px 0px; font-weight: bold; line-height: 50px')
     this.mouse = {}
     const self = this
     this.canvas = new Canvas(window.innerWidth,window.innerHeight)

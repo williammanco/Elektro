@@ -22,20 +22,20 @@ export default {
   output: {
     filename: 'js/bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: process.env.NODE_ENV === 'production' ? './dist/' : `./dist/`,
+    publicPath: process.env.NODE_ENV === 'production' ? './dist/' : `http://localhost:${WDS_PORT}/dist/`,
   },
   plugins: [
     new DashboardPlugin(),
     new webpack.ProvidePlugin({
-    $: "jquery",
-    jQuery: "jquery",
-    THREE: "three",
-    "window.THREE": "three",
-    "window.$": "jquery",
-    "window.jQuery": "jquery",
+      $: "jquery",
+      jQuery: "jquery",
+      THREE: "three",
+      "window.THREE": "three",
+      "window.$": "jquery",
+      "window.jQuery": "jquery"
+    }),
     html,
     uglify
-    })
   ],
   module: {
     rules: [
