@@ -4,6 +4,6 @@
 
 # Nervous Ball
 
-A experimental ES6 app ... WIP
+(NervousBall)["https://williammanco.github.io/NervousBall/dev_experiment_william.jpg"]
 
 # API
